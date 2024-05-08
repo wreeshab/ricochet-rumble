@@ -8,10 +8,17 @@ const rightBtn = document.querySelector("#right");
 let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
+let ricochetRotation = {};
 
 function restart() {
   document.location.reload();
 }
+function setRicoRotation() {
+  for (i = 0; i < width * width; i++) {
+    ricochetRotation[i] = 0;
+  }
+}
+setRicoRotation();
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
@@ -23,6 +30,10 @@ function createBoard() {
     const column = i % width;
 
     square.setAttribute("square-id", `${row}${column}`);
+
+    const currentPosition = row * width + column;
+    square.style.transform = `rotate(${ricochetRotation[currentPosition]}deg)`;
+    // ricochetRotation[currentPosition] = 0;
 
     gameBoard.append(square);
   });
@@ -53,7 +64,6 @@ function handleRicochetMove(event) {
     moveRicochet(selectedPiece.row, selectedPiece.column, row, column);
   }
 }
-
 gameBoard.addEventListener("click", (e) => {
   const parentNode = e.target.parentNode;
   if (parentNode) {
@@ -77,6 +87,8 @@ gameBoard.addEventListener("click", (e) => {
         } else {
           highlightOtherPieces(row, column);
         }
+      } else {
+        selectedPiece = null; // Reset selectedPiece if the clicked square is empty
       }
     }
   }
@@ -93,6 +105,8 @@ function clearHighlightedSquares() {
 }
 
 function highlightOtherPieces(row, column) {
+  rightBtn.disabled = true;
+  leftBtn.disabled = true;
   clearHighlightedSquares();
 
   const directions = [
@@ -140,6 +154,7 @@ function highlightRicochetPieces(row, column) {
   const currentPosition = gameBoard.querySelector(
     `[square-id="${row}${column}"]`
   );
+  // console.log(currentPosition);
 
   directions.forEach((direction) => {
     const newRow = row + direction.row;
@@ -155,6 +170,39 @@ function highlightRicochetPieces(row, column) {
       }
     }
   });
+
+  enableRotationButtons(currentPosition);
+}
+// Define event listener functions
+const rotateLeftHandler = () => handleRotationClick(90);
+const rotateRightHandler = () => handleRotationClick(-90);
+
+function enableRotationButtons(currentPosition) {
+  rightBtn.disabled = false;
+  leftBtn.disabled = false;
+  // Add event listeners using the defined functions
+  leftBtn.addEventListener("click", rotateLeftHandler);
+  rightBtn.addEventListener("click", rotateRightHandler);
+}
+
+function handleRotationClick(degrees) {
+  const currentPosition = selectedPiece.row * width + selectedPiece.column;
+
+  // Set the rotation angle to the provided degrees
+  ricochetRotation[currentPosition] += degrees;
+  console.log(ricochetRotation[currentPosition]);
+
+  const toRotatePiece = gameBoard.querySelector(
+    `[square-id="${selectedPiece.row}${selectedPiece.column}"]`
+  );
+  toRotatePiece.style.transform = `rotate(${ricochetRotation[currentPosition]}deg)`;
+  clearHighlightedSquares();
+
+  // Remove event listeners using the defined functions
+  leftBtn.removeEventListener("click", rotateLeftHandler);
+  rightBtn.removeEventListener("click", rotateRightHandler);
+  rightBtn.disabled = true;
+  leftBtn.disabled = true;
 }
 
 function isValidPosition(row, column) {
@@ -171,6 +219,9 @@ function movePiece(oldRow, oldColumn, newRow, newColumn) {
 function highlightCannonBoxes(row, column) {
   const leftColumn = column - 1;
   const rightColumn = column + 1;
+
+  rightBtn.disabled = true;
+  leftBtn.disabled = true;
 
   clearHighlightedSquares();
 
@@ -209,9 +260,21 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
 }
 
 function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
-  startPieces[newRow * width + newColumn] =
-    startPieces[oldRow * width + oldColumn];
-  startPieces[oldRow * width + oldColumn] = "";
+  const oldIndex = oldRow * width + oldColumn;
+  const newIndex = newRow * width + newColumn;
+
+  // Move the piece
+  startPieces[newIndex] = startPieces[oldIndex];
+  startPieces[oldIndex] = "";
+
+  // Retain rotation state
+  ricochetRotation[newIndex] = ricochetRotation[oldIndex];
+  ricochetRotation[oldIndex] = 0;
+
+  rightBtn.disabled = true;
+  leftBtn.disabled = true;
+
+  // Update board
   updateBoard();
 }
 
@@ -228,4 +291,5 @@ function changePlayer() {
 function updateBoard() {
   gameBoard.innerHTML = "";
   createBoard();
+  // updateRicochetRotation(); // Uncomment this line to update the rotation of ricochet pieces
 }
