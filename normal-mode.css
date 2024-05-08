@@ -153,3 +153,6 @@ path{
     margin: 5px;
 
 }
+button:disabled{
+    opacity: 0;
+}
