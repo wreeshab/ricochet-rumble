@@ -5,14 +5,22 @@ const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
 
+let bulletLocation = {};
 let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
 let ricochetRotation = {};
+let gameStarted = true;
+let gamePaused = false;
+
 
 function restart() {
   document.location.reload();
 }
+for (i = 0; i < width * width; i++) {
+  bulletLocation[i] = 0;
+}
+
 function setRicoRotation() {
   for (i = 0; i < width * width; i++) {
     ricochetRotation[i] = 0;
@@ -64,31 +72,37 @@ function handleRicochetMove(event) {
     moveRicochet(selectedPiece.row, selectedPiece.column, row, column);
   }
 }
+
+// ---------------------------------------- PRIMARY EVENT LISTENER-----------------------------------------------
 gameBoard.addEventListener("click", (e) => {
-  const parentNode = e.target.parentNode;
-  if (parentNode) {
-    const boxId = parentNode.getAttribute("square-id");
-    if (boxId) {
-      const row = parseInt(boxId[0]);
-      const column = parseInt(boxId[1]);
-      const piece = startPieces[row * width + column];
-      if (piece !== "") {
-        selectedPiece = { row, column }; // Set selectedPiece
-        if (piece === topCannon || piece === bottomCannon) {
-          console.log("object");
-          highlightCannonBoxes(row, column);
-        } else if (
-          piece === topRicochet ||
-          piece === bottomRicochet ||
-          piece === topSemiRicochet ||
-          piece === bottomSemiRicochet
-        ) {
-          highlightRicochetPieces(row, column);
-        } else {
-          highlightOtherPieces(row, column);
+  if (gameStarted) {
+    if (!gamePaused) {
+      const parentNode = e.target.parentNode;
+      if (parentNode) {
+        const boxId = parentNode.getAttribute("square-id");
+        if (boxId) {
+          const row = parseInt(boxId[0]);
+          const column = parseInt(boxId[1]);
+          const piece = startPieces[row * width + column];
+          if (piece !== "") {
+            selectedPiece = { row, column }; // Set selectedPiece
+            if (piece === topCannon || piece === bottomCannon) {
+              console.log("object");
+              highlightCannonBoxes(row, column);
+            } else if (
+              piece === topRicochet ||
+              piece === bottomRicochet ||
+              piece === topSemiRicochet ||
+              piece === bottomSemiRicochet
+            ) {
+              highlightRicochetPieces(row, column);
+            } else {
+              highlightOtherPieces(row, column);
+            }
+          } else {
+            selectedPiece = null; // to Reset selectedPiece if the clicked square is empty
+          }
         }
-      } else {
-        selectedPiece = null; // Reset selectedPiece if the clicked square is empty
       }
     }
   }
@@ -267,7 +281,7 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
   startPieces[newIndex] = startPieces[oldIndex];
   startPieces[oldIndex] = "";
 
-  // Retain rotation state
+  // to Retain rotation state
   ricochetRotation[newIndex] = ricochetRotation[oldIndex];
   ricochetRotation[oldIndex] = 0;
 
