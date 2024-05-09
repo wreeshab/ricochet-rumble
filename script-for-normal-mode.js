@@ -5,7 +5,7 @@ const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
 
-let bulletLocation = {};
+
 let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
@@ -17,9 +17,7 @@ let gamePaused = false;
 function restart() {
   document.location.reload();
 }
-for (i = 0; i < width * width; i++) {
-  bulletLocation[i] = 0;
-}
+
 
 function setRicoRotation() {
   for (i = 0; i < width * width; i++) {
