@@ -102,20 +102,23 @@ button:active {
     flex-wrap: wrap;
     border-radius: 10px;
 }
+
 .square {
     box-sizing: border-box;
     height: 80px;
     width: 80px;
-    border: 5px solid rgba(18, 17, 74, 0.618); /* Use solid border to avoid anti-aliasing */
+    border: 5px solid rgba(18, 17, 74, 0.618);
+    /* Use solid border to avoid anti-aliasing */
     justify-content: center;
     align-items: center;
     display: flex;
     position: relative;
     z-index: 5;
-    border-radius: 5px;
 
 }
-.square svg{
+
+
+.square svg {
     height: 60px;
     width: 60px;
     background: transparent;
@@ -123,15 +126,16 @@ button:active {
     z-index: -5;
 }
 
-.pieces{
+.pieces {
     z-index: 1;
 }
-path{
+
+path {
     z-index: -7;
     position: relative;
 }
 
-.dummy{
+.dummy {
     background-color: #3c8119;
 }
 
@@ -142,17 +146,32 @@ path{
     /* Adjust as needed */
 }
 
-#left-right{
+#left-right {
     display: flex;
 
 }
-#left-right button{
+
+#left-right button {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 5px;
 
 }
-button:disabled{
-    opacity: 0;
+
+button:disabled {
+    opacity: 0.5;
+}
+
+#semiRicochet svg {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 68px;
+    width: 69px;
+}
+
+.square .bullet svg {
+    height: 20px;
+    width: 20px;
 }
