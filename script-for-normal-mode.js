@@ -9,9 +9,10 @@ let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
 let ricochetRotation = {};
-let gameStarted = true;
+let gameOver = false;
 let gamePaused = false;
 let isBulletMoving = false;
+playerDisplay.innerText = "green's";
 
 function restart() {
   document.location.reload();
@@ -71,32 +72,35 @@ function handleRicochetMove(event) {
 
 // ---------------------------------------- PRIMARY EVENT LISTENER-----------------------------------------------
 gameBoard.addEventListener("click", (e) => {
-  if (gameStarted) {
+  if (!gameOver) {
     if (!gamePaused) {
-      if (!isBulletMoving) {
-        const parentNode = e.target.parentNode;
-        if (parentNode) {
-          const boxId = parentNode.getAttribute("square-id");
-          if (boxId) {
-            const row = parseInt(boxId[0]);
-            const column = parseInt(boxId[1]);
-            const piece = startPieces[row * width + column];
-            if (piece !== "") {
-              selectedPiece = { row, column }; // Set selectedPiece
-              if (piece === topCannon || piece === bottomCannon) {
-                highlightCannonBoxes(row, column);
-              } else if (
-                piece === topRicochet ||
-                piece === bottomRicochet ||
-                piece === topSemiRicochet ||
-                piece === bottomSemiRicochet
-              ) {
-                highlightRicochetPieces(row, column);
+      if (e.target.classList.contains(currentPlayer)) {
+        if (!isBulletMoving) {
+          const parentNode = e.target.parentNode;
+          console.log(e.target);
+          if (parentNode) {
+            const boxId = parentNode.getAttribute("square-id");
+            if (boxId) {
+              const row = parseInt(boxId[0]);
+              const column = parseInt(boxId[1]);
+              const piece = startPieces[row * width + column];
+              if (piece !== "") {
+                selectedPiece = { row, column }; // Set selectedPiece
+                if (piece === topCannon || piece === bottomCannon) {
+                  highlightCannonBoxes(row, column);
+                } else if (
+                  piece === topRicochet ||
+                  piece === bottomRicochet ||
+                  piece === topSemiRicochet ||
+                  piece === bottomSemiRicochet
+                ) {
+                  highlightRicochetPieces(row, column);
+                } else {
+                  highlightOtherPieces(row, column);
+                }
               } else {
-                highlightOtherPieces(row, column);
+                selectedPiece = null; // to Reset selectedPiece if the clicked square is empty
               }
-            } else {
-              selectedPiece = null; // to Reset selectedPiece if the clicked square is empty
             }
           }
         }
@@ -214,6 +218,8 @@ function handleRotationClick(degrees) {
   rightBtn.removeEventListener("click", rotateRightHandler);
   rightBtn.disabled = true;
   leftBtn.disabled = true;
+
+  changePlayer();
 }
 
 function isValidPosition(row, column) {
@@ -224,6 +230,7 @@ function movePiece(oldRow, oldColumn, newRow, newColumn) {
   startPieces[newRow * width + newColumn] =
     startPieces[oldRow * width + oldColumn];
   startPieces[oldRow * width + oldColumn] = "";
+  changePlayer();
   updateBoard();
 }
 
@@ -267,6 +274,7 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
     startPieces[newIndex] = bottomCannon;
   }
   shootBullet(newRow, newColumn);
+  
 
   updateBoard();
 }
@@ -285,6 +293,8 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
 
   rightBtn.disabled = true;
   leftBtn.disabled = true;
+
+  changePlayer();
 
   // Update board
   updateBoard();
@@ -344,6 +354,7 @@ function shootBullet(row, column) {
       if (newBox.innerHTML !== "") {
         location.removeChild(bulletDiv);
         isBulletMoving = false;
+        changePlayer();
         return;
       } else {
         isBulletMoving = true;
@@ -355,6 +366,7 @@ function shootBullet(row, column) {
       location.removeChild(bulletDiv);
 
       isBulletMoving = false;
+      changePlayer();
       return;
     }
   }
