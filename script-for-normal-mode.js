@@ -5,19 +5,17 @@ const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
 
-
 let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
 let ricochetRotation = {};
 let gameStarted = true;
 let gamePaused = false;
-
+let isBulletMoving = false;
 
 function restart() {
   document.location.reload();
 }
-
 
 function setRicoRotation() {
   for (i = 0; i < width * width; i++) {
@@ -75,30 +73,31 @@ function handleRicochetMove(event) {
 gameBoard.addEventListener("click", (e) => {
   if (gameStarted) {
     if (!gamePaused) {
-      const parentNode = e.target.parentNode;
-      if (parentNode) {
-        const boxId = parentNode.getAttribute("square-id");
-        if (boxId) {
-          const row = parseInt(boxId[0]);
-          const column = parseInt(boxId[1]);
-          const piece = startPieces[row * width + column];
-          if (piece !== "") {
-            selectedPiece = { row, column }; // Set selectedPiece
-            if (piece === topCannon || piece === bottomCannon) {
-              console.log("object");
-              highlightCannonBoxes(row, column);
-            } else if (
-              piece === topRicochet ||
-              piece === bottomRicochet ||
-              piece === topSemiRicochet ||
-              piece === bottomSemiRicochet
-            ) {
-              highlightRicochetPieces(row, column);
+      if (!isBulletMoving) {
+        const parentNode = e.target.parentNode;
+        if (parentNode) {
+          const boxId = parentNode.getAttribute("square-id");
+          if (boxId) {
+            const row = parseInt(boxId[0]);
+            const column = parseInt(boxId[1]);
+            const piece = startPieces[row * width + column];
+            if (piece !== "") {
+              selectedPiece = { row, column }; // Set selectedPiece
+              if (piece === topCannon || piece === bottomCannon) {
+                highlightCannonBoxes(row, column);
+              } else if (
+                piece === topRicochet ||
+                piece === bottomRicochet ||
+                piece === topSemiRicochet ||
+                piece === bottomSemiRicochet
+              ) {
+                highlightRicochetPieces(row, column);
+              } else {
+                highlightOtherPieces(row, column);
+              }
             } else {
-              highlightOtherPieces(row, column);
+              selectedPiece = null; // to Reset selectedPiece if the clicked square is empty
             }
-          } else {
-            selectedPiece = null; // to Reset selectedPiece if the clicked square is empty
           }
         }
       }
@@ -267,6 +266,7 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
   } else {
     startPieces[newIndex] = bottomCannon;
   }
+  shootBullet(newRow, newColumn);
 
   updateBoard();
 }
@@ -304,4 +304,60 @@ function updateBoard() {
   gameBoard.innerHTML = "";
   createBoard();
   // updateRicochetRotation(); // Uncomment this line to update the rotation of ricochet pieces
+}
+
+function shootBullet(row, column) {
+  let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
+  let direction;
+  // Determine the direction of the bullet
+  if (row === 0) {
+    direction = "down";
+  } else if (row === width - 1) {
+    direction = "up";
+  }
+
+  // Create the bullet
+  const bulletDiv = document.createElement("div");
+  bulletDiv.classList.add("bullet");
+  bulletDiv.innerHTML = bullet;
+  location.appendChild(bulletDiv);
+
+  function moveBullet() {
+    let newBulletRow = parseInt(location.getAttribute("square-id")[0]);
+    let newBulletColumn = parseInt(location.getAttribute("square-id")[1]);
+
+    if (direction === "down") {
+      newBulletRow++;
+    } else if (direction === "up") {
+      newBulletRow--;
+    }
+
+    handleBulletMovement(newBulletRow, newBulletColumn);
+  }
+
+  function handleBulletMovement(newRow, newColumn) {
+    const newBox = gameBoard.querySelector(
+      `[square-id="${newRow}${newColumn}"]`
+    );
+
+    if (newBox) {
+      if (newBox.innerHTML !== "") {
+        location.removeChild(bulletDiv);
+        isBulletMoving = false;
+        return;
+      } else {
+        isBulletMoving = true;
+        newBox.appendChild(bulletDiv);
+        location = newBox;
+        setTimeout(moveBullet, 300);
+      }
+    } else {
+      location.removeChild(bulletDiv);
+
+      isBulletMoving = false;
+      return;
+    }
+  }
+
+  moveBullet();
 }
