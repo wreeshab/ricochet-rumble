@@ -25,6 +25,7 @@ setRicoRotation();
 function equatePieces(){
   for(i=0; i<width*width; i++){
     startPieces[i] = initialPieces[i];
+    console.log(`${startPieces[i]} ${i}`);
   }
 }
 
@@ -36,10 +37,9 @@ function resetGame() {
   currentPlayer = "green";
   selectedPiece = null;
   highlightedSquares = [];
-  startPieces = initialPieces;
   gameBoard.innerHTML = "";
-  setRicoRotation();
   equatePieces();
+  setRicoRotation();
   createBoard();
 }
 
