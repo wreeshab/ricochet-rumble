@@ -9,6 +9,16 @@ let startPieces = ["", "", "", "", topTitan, "", topCannon, "",
     bottomTank, "", "", "", bottomCannon, "", "", bottomTitan
 ];
 
+const initialPieces = ["", "", "", "", topTitan, "", topCannon, "",
+"", "", topTank, "", "", topSemiRicochet, topRicochet, "",
+"", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "",
+"",bottomRicochet, "", "", "",  bottomSemiRicochet, "", "",
+bottomTank, "", "", "", bottomCannon, "", "", bottomTitan
+];
+
 const bluePieces = [
     topCannon,
     topRicochet,

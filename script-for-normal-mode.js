@@ -4,6 +4,7 @@ const allSquares = gameBoard.querySelectorAll(".square");
 const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
+const resetButton = document.querySelector("#reset");
 
 let highlightedSquares = [];
 let selectedPiece = null;
@@ -14,16 +15,35 @@ let gamePaused = false;
 let isBulletMoving = false;
 playerDisplay.innerText = "green's";
 
-function restart() {
-  document.location.reload();
-}
-
 function setRicoRotation() {
   for (i = 0; i < width * width; i++) {
     ricochetRotation[i] = 0;
   }
 }
 setRicoRotation();
+
+function equatePieces(){
+  for(i=0; i<width*width; i++){
+    startPieces[i] = initialPieces[i];
+  }
+}
+
+function resetGame() {
+  gameOver = false;
+  gamePaused = false;
+  isBulletMoving = false;
+  playerDisplay.innerText = "green's";
+  currentPlayer = "green";
+  selectedPiece = null;
+  highlightedSquares = [];
+  startPieces = initialPieces;
+  gameBoard.innerHTML = "";
+  setRicoRotation();
+  equatePieces();
+  createBoard();
+}
+
+resetButton.addEventListener("click", resetGame);
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
@@ -274,7 +294,6 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
     startPieces[newIndex] = bottomCannon;
   }
   shootBullet(newRow, newColumn);
-  
 
   updateBoard();
 }
