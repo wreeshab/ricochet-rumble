@@ -76,7 +76,7 @@ button:hover {
 }
 
 button:active {
-    opacity: 0.7;
+    opacity: 2;
 }
 
 #timer-div {
@@ -141,7 +141,7 @@ path {
 
 #whose-turn {
     text-align: center;
-    font-size: 1.7em;
+    font-size: 1.8em;
     text-shadow: 1px 1px 5px rgb(227, 176, 234);
     /* Adjust as needed */
 }
@@ -160,7 +160,13 @@ path {
 }
 
 button:disabled {
-    opacity: 0.5;
+    outline: 0;
+    box-shadow: 0;
+    
+}
+button:disabled:hover{
+    box-shadow: 0;
+    cursor: no-drop;
 }
 
 #semiRicochet svg {

@@ -13,6 +13,9 @@ let ricochetRotation = {};
 let gameOver = false;
 let gamePaused = false;
 let isBulletMoving = false;
+let bulletDirection = "";
+let cannonCoords;
+
 playerDisplay.innerText = "green's";
 
 function setRicoRotation() {
@@ -22,25 +25,27 @@ function setRicoRotation() {
 }
 setRicoRotation();
 
-function equatePieces(){
-  for(i=0; i<width*width; i++){
+function equatePieces() {
+  for (i = 0; i < width * width; i++) {
     startPieces[i] = initialPieces[i];
     console.log(`${startPieces[i]} ${i}`);
   }
 }
 
 function resetGame() {
-  gameOver = false;
-  gamePaused = false;
-  isBulletMoving = false;
-  playerDisplay.innerText = "green's";
-  currentPlayer = "green";
-  selectedPiece = null;
-  highlightedSquares = [];
-  gameBoard.innerHTML = "";
-  equatePieces();
-  setRicoRotation();
-  createBoard();
+  if (!isBulletMoving) {
+    gameOver = false;
+    gamePaused = false;
+    isBulletMoving = false;
+    playerDisplay.innerText = "green's";
+    currentPlayer = "green";
+    selectedPiece = null;
+    highlightedSquares = [];
+    gameBoard.innerHTML = "";
+    equatePieces();
+    setRicoRotation();
+    createBoard();
+  }
 }
 
 resetButton.addEventListener("click", resetGame);
@@ -239,7 +244,8 @@ function handleRotationClick(degrees) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
-  changePlayer();
+  handleCannonShoot(currentPlayer)
+  updateBoard()
 }
 
 function isValidPosition(row, column) {
@@ -250,7 +256,7 @@ function movePiece(oldRow, oldColumn, newRow, newColumn) {
   startPieces[newRow * width + newColumn] =
     startPieces[oldRow * width + oldColumn];
   startPieces[oldRow * width + oldColumn] = "";
-  changePlayer();
+  handleCannonShoot(currentPlayer)
   updateBoard();
 }
 
@@ -293,9 +299,11 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
   } else {
     startPieces[newIndex] = bottomCannon;
   }
-  shootBullet(newRow, newColumn);
-
   updateBoard();
+  handleCannonShoot( currentPlayer);
+  updateBoard()
+
+  
 }
 
 function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
@@ -313,7 +321,8 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
-  changePlayer();
+  handleCannonShoot(currentPlayer)
+  
 
   // Update board
   updateBoard();
@@ -335,40 +344,123 @@ function updateBoard() {
   // updateRicochetRotation(); // Uncomment this line to update the rotation of ricochet pieces
 }
 
-function shootBullet(row, column) {
-  let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
-  let direction;
-  // Determine the direction of the bullet
-  if (row === 0) {
-    direction = "down";
-  } else if (row === width - 1) {
-    direction = "up";
-  }
+// function shootBullet(row, column) {
+//   let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
+//   let direction;
+//   // Determine the direction of the bullet
+//   if (row === 0) {
+//     direction = "down";
+//   } else if (row === width - 1) {
+//     direction = "up";
+//   }
 
-  // Create the bullet
-  const bulletDiv = document.createElement("div");
+//   // Create the bullet
+//   const bulletDiv = document.createElement("div");
+//   bulletDiv.classList.add("bullet");
+//   bulletDiv.innerHTML = bullet;
+//   location.appendChild(bulletDiv);
+
+//   function moveBullet() {
+//     let newBulletRow = parseInt(location.getAttribute("square-id")[0]);
+//     let newBulletColumn = parseInt(location.getAttribute("square-id")[1]);
+
+//     if (direction === "down") {
+//       newBulletRow++;
+//     } else if (direction === "up") {
+//       newBulletRow--;
+//     }
+
+//     handleBulletMovement(newBulletRow, newBulletColumn);
+//   }
+
+//   function handleBulletMovement(newRow, newColumn) {
+//     const newBox = gameBoard.querySelector(
+//       `[square-id="${newRow}${newColumn}"]`
+//     );
+
+//     if (newBox) {
+//       if (newBox.innerHTML !== "") {
+//         location.removeChild(bulletDiv);
+//         isBulletMoving = false;
+//         changePlayer();
+//         return;
+//       } else {
+//         isBulletMoving = true;
+//         newBox.appendChild(bulletDiv);
+//         location = newBox;
+//         setTimeout(moveBullet, 300);
+//       }
+//     } else {
+//       location.removeChild(bulletDiv);
+
+//       isBulletMoving = false;
+//       changePlayer();
+//       return;
+//     }
+//   }
+
+//   moveBullet();
+// }
+console.log(currentPlayer);
+
+function handleCannonShoot(currentPlayer) {
+  console.log(currentPlayer);
+  if (currentPlayer == "green") {
+    cannonCoords = document
+      .getElementById("bottomCanon")
+      .parentNode.getAttribute("square-id");
+    bulletDirection = "up";
+    console.log(cannonCoords);
+  } else {
+    cannonCoords = document
+      .getElementById("topCannon")
+      .parentNode.getAttribute("square-id");
+    bulletDirection = "down";
+  }
+  //--
+  // bulletDirection = row === 0 ? "down" : "up";
+  //--
+  shootBullet(
+    parseInt(cannonCoords[0]),
+    parseInt(cannonCoords[1]),
+    bulletDirection
+  );
+}
+
+function shootBullet(row, column, direction) {
+  let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
+  let bulletDiv = document.createElement("div");
   bulletDiv.classList.add("bullet");
   bulletDiv.innerHTML = bullet;
   location.appendChild(bulletDiv);
 
-  function moveBullet() {
-    let newBulletRow = parseInt(location.getAttribute("square-id")[0]);
-    let newBulletColumn = parseInt(location.getAttribute("square-id")[1]);
+  moveBullet(location, bulletDiv, row, column, direction);
+}
+function moveBullet(location, bulletDiv, row, column, direction) {
+  setTimeout(() => {
+    let newRow = row;
+    let newColumn = column;
+    switch (direction) {
+      case "right":
+        newColumn++;
+        break;
+      case "left":
+        newColumn--;
+        break;
+      case "up":
+        newRow--;
+        break;
+      case "down":
+        newRow++;
+        break;
 
-    if (direction === "down") {
-      newBulletRow++;
-    } else if (direction === "up") {
-      newBulletRow--;
+      default:
+        break;
     }
 
-    handleBulletMovement(newBulletRow, newBulletColumn);
-  }
-
-  function handleBulletMovement(newRow, newColumn) {
     const newBox = gameBoard.querySelector(
       `[square-id="${newRow}${newColumn}"]`
     );
-
     if (newBox) {
       if (newBox.innerHTML !== "") {
         location.removeChild(bulletDiv);
@@ -376,20 +468,15 @@ function shootBullet(row, column) {
         changePlayer();
         return;
       } else {
-        isBulletMoving = true;
         newBox.appendChild(bulletDiv);
         location = newBox;
-        setTimeout(moveBullet, 300);
+        isBulletMoving = true;
+        moveBullet(location, bulletDiv, newRow, newColumn, direction);
       }
     } else {
       location.removeChild(bulletDiv);
-
       isBulletMoving = false;
       changePlayer();
-      return;
     }
-  }
-
-  moveBullet();
+  }, 200);
 }
-//hello
