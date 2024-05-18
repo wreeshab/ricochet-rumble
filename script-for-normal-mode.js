@@ -481,7 +481,7 @@ function handleBulletCollision(
       newRow,
       newColumn,
       bulletDirection,
-      location
+      currentLocation
     );
   } else if (element.children[0].id == "ricochet") {
     handleRicochetCollision(
@@ -489,7 +489,7 @@ function handleBulletCollision(
       newRow,
       newColumn,
       bulletDirection,
-      location
+      currentLocation
     );
   }
 }
@@ -511,6 +511,9 @@ function handleSemiRicochetCollision(
       console.log("hi");
       moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
+      console.log(location);
+      location.removeChild(bulletDiv);
+      isBulletMoving = false;
       changePlayer();
     }
   } else if (element.style.transform === "rotate(90deg)") {
@@ -521,6 +524,8 @@ function handleSemiRicochetCollision(
       bulletDirection = "up";
       moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
+      location.removeChild(bulletDiv);
+      isBulletMoving = false;
       changePlayer();
     }
   } else if (element.style.transform === "rotate(180deg)") {
@@ -531,6 +536,8 @@ function handleSemiRicochetCollision(
       bulletDirection = "down";
       moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
+      location.removeChild(bulletDiv);
+      isBulletMoving = false;
       changePlayer();
     }
   } else if (element.style.transform === "rotate(270deg)") {
@@ -541,6 +548,8 @@ function handleSemiRicochetCollision(
       bulletDirection = "down";
       moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
+      location.removeChild(bulletDiv);
+      isBulletMoving = false;
       changePlayer();
     }
   }
@@ -593,5 +602,4 @@ function handleRicochetCollision(
     moveBullet(location, newRow, newColumn, bulletDirection);
   }
   console.log(bulletDirection);
-  
 }
