@@ -5,6 +5,7 @@ const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
 const resetButton = document.querySelector("#reset");
+const timer = document.querySelector("#timertext");
 
 let highlightedSquares = [];
 let selectedPiece = null;
@@ -15,6 +16,13 @@ let gamePaused = false;
 let isBulletMoving = false;
 let bulletDirection = "";
 let cannonCoords;
+let bulletSpeed = 150;
+rightBtn.disabled = true;
+leftBtn.disabled = true;
+
+let bulletDiv = document.createElement("div");
+bulletDiv.classList.add("bullet");
+bulletDiv.innerHTML = bullet;
 
 playerDisplay.innerText = "green's";
 
@@ -24,6 +32,18 @@ function setRicoRotation() {
   }
 }
 setRicoRotation();
+// console.log(timer);
+function timerr() {
+  var sec = 30;
+  var timerr = setInterval(function () {
+    timer.innerHTML = "00:" + sec;
+    sec--;
+    if (sec < 0) {
+      clearInterval(timerr);
+    }
+  }, 1000);
+}
+// timerr()
 
 function equatePieces() {
   for (i = 0; i < width * width; i++) {
@@ -45,6 +65,8 @@ function resetGame() {
     equatePieces();
     setRicoRotation();
     createBoard();
+    rightBtn.disabled = true;
+    leftBtn.disabled = true;
   }
 }
 
@@ -214,8 +236,8 @@ function highlightRicochetPieces(row, column) {
   enableRotationButtons(currentPosition);
 }
 // Define event listener functions
-const rotateLeftHandler = () => handleRotationClick(90);
-const rotateRightHandler = () => handleRotationClick(-90);
+const rotateLeftHandler = () => handleRotationClick(-90);
+const rotateRightHandler = () => handleRotationClick(90);
 
 function enableRotationButtons(currentPosition) {
   rightBtn.disabled = false;
@@ -230,8 +252,11 @@ function handleRotationClick(degrees) {
 
   // Set the rotation angle to the provided degrees
   ricochetRotation[currentPosition] += degrees;
+  ricochetRotation[currentPosition] %= 360;
+  if (ricochetRotation[currentPosition] < 0) {
+    ricochetRotation[currentPosition] += 360;
+  }
   console.log(ricochetRotation[currentPosition]);
-
   const toRotatePiece = gameBoard.querySelector(
     `[square-id="${selectedPiece.row}${selectedPiece.column}"]`
   );
@@ -244,8 +269,8 @@ function handleRotationClick(degrees) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
-  handleCannonShoot(currentPlayer)
-  updateBoard()
+  handleCannonShoot(currentPlayer);
+  updateBoard();
 }
 
 function isValidPosition(row, column) {
@@ -256,7 +281,7 @@ function movePiece(oldRow, oldColumn, newRow, newColumn) {
   startPieces[newRow * width + newColumn] =
     startPieces[oldRow * width + oldColumn];
   startPieces[oldRow * width + oldColumn] = "";
-  handleCannonShoot(currentPlayer)
+  handleCannonShoot(currentPlayer);
   updateBoard();
 }
 
@@ -300,10 +325,8 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
     startPieces[newIndex] = bottomCannon;
   }
   updateBoard();
-  handleCannonShoot( currentPlayer);
-  updateBoard()
-
-  
+  handleCannonShoot(currentPlayer);
+  updateBoard();
 }
 
 function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
@@ -321,8 +344,7 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
-  handleCannonShoot(currentPlayer)
-  
+  handleCannonShoot(currentPlayer);
 
   // Update board
   updateBoard();
@@ -344,63 +366,6 @@ function updateBoard() {
   // updateRicochetRotation(); // Uncomment this line to update the rotation of ricochet pieces
 }
 
-// function shootBullet(row, column) {
-//   let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
-//   let direction;
-//   // Determine the direction of the bullet
-//   if (row === 0) {
-//     direction = "down";
-//   } else if (row === width - 1) {
-//     direction = "up";
-//   }
-
-//   // Create the bullet
-//   const bulletDiv = document.createElement("div");
-//   bulletDiv.classList.add("bullet");
-//   bulletDiv.innerHTML = bullet;
-//   location.appendChild(bulletDiv);
-
-//   function moveBullet() {
-//     let newBulletRow = parseInt(location.getAttribute("square-id")[0]);
-//     let newBulletColumn = parseInt(location.getAttribute("square-id")[1]);
-
-//     if (direction === "down") {
-//       newBulletRow++;
-//     } else if (direction === "up") {
-//       newBulletRow--;
-//     }
-
-//     handleBulletMovement(newBulletRow, newBulletColumn);
-//   }
-
-//   function handleBulletMovement(newRow, newColumn) {
-//     const newBox = gameBoard.querySelector(
-//       `[square-id="${newRow}${newColumn}"]`
-//     );
-
-//     if (newBox) {
-//       if (newBox.innerHTML !== "") {
-//         location.removeChild(bulletDiv);
-//         isBulletMoving = false;
-//         changePlayer();
-//         return;
-//       } else {
-//         isBulletMoving = true;
-//         newBox.appendChild(bulletDiv);
-//         location = newBox;
-//         setTimeout(moveBullet, 300);
-//       }
-//     } else {
-//       location.removeChild(bulletDiv);
-
-//       isBulletMoving = false;
-//       changePlayer();
-//       return;
-//     }
-//   }
-
-//   moveBullet();
-// }
 console.log(currentPlayer);
 
 function handleCannonShoot(currentPlayer) {
@@ -427,20 +392,19 @@ function handleCannonShoot(currentPlayer) {
   );
 }
 
-function shootBullet(row, column, direction) {
+function shootBullet(row, column, bulletDirection) {
   let location = gameBoard.querySelector(`[square-id="${row}${column}"]`);
-  let bulletDiv = document.createElement("div");
-  bulletDiv.classList.add("bullet");
-  bulletDiv.innerHTML = bullet;
+
   location.appendChild(bulletDiv);
 
-  moveBullet(location, bulletDiv, row, column, direction);
+  moveBullet(location, row, column, bulletDirection);
 }
-function moveBullet(location, bulletDiv, row, column, direction) {
+function moveBullet(location, row, column, bulletDirection) {
   setTimeout(() => {
+    console.log(bulletDirection);
     let newRow = row;
     let newColumn = column;
-    switch (direction) {
+    switch (bulletDirection) {
       case "right":
         newColumn++;
         break;
@@ -463,20 +427,171 @@ function moveBullet(location, bulletDiv, row, column, direction) {
     );
     if (newBox) {
       if (newBox.innerHTML !== "") {
-        location.removeChild(bulletDiv);
-        isBulletMoving = false;
-        changePlayer();
+        handleBulletCollision(
+          newBox,
+          newRow,
+          newColumn,
+          location,
+          currentPlayer
+        );
+        // location.removeChild(bulletDiv);
+        // isBulletMoving = false;
+        // changePlayer();
         return;
       } else {
         newBox.appendChild(bulletDiv);
         location = newBox;
         isBulletMoving = true;
-        moveBullet(location, bulletDiv, newRow, newColumn, direction);
+        console.log(bulletDirection);
+        moveBullet(location, newRow, newColumn, bulletDirection);
       }
     } else {
       location.removeChild(bulletDiv);
       isBulletMoving = false;
       changePlayer();
     }
-  }, 200);
+  }, bulletSpeed);
+}
+
+function handleBulletCollision(
+  element,
+  newRow,
+  newColumn,
+  currentLocation,
+  currentPlayer
+) {
+  console.log("collided with", element.children[0].id);
+
+  if (
+    element.children[0].id == "tank" ||
+    element.children[0].id == "topCannon" ||
+    element.children[0].id == "bottomCannon"
+  ) {
+    console.log("hit", element.children[0].id);
+    currentLocation.removeChild(bulletDiv);
+    isBulletMoving = false;
+    changePlayer();
+  } else if (element.children[0].id == "titan") {
+    currentLocation.removeChild(bulletDiv);
+    isBulletMoving = false;
+    changePlayer();
+  } else if (element.children[0].id == "semiRicochet") {
+    handleSemiRicochetCollision(
+      element,
+      newRow,
+      newColumn,
+      bulletDirection,
+      location
+    );
+  } else if (element.children[0].id == "ricochet") {
+    handleRicochetCollision(
+      element,
+      newRow,
+      newColumn,
+      bulletDirection,
+      location
+    );
+  }
+}
+function handleSemiRicochetCollision(
+  element,
+  newRow,
+  newColumn,
+  bulletDirection,
+  location
+) {
+  console.log(element.style.transform);
+  console.log(bulletDirection);
+  if (element.style.transform === "rotate(0deg)") {
+    if (bulletDirection === "down") {
+      bulletDirection = "left";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else if (bulletDirection === "right") {
+      bulletDirection = "up";
+      console.log("hi");
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else {
+      changePlayer();
+    }
+  } else if (element.style.transform === "rotate(90deg)") {
+    if (bulletDirection === "down") {
+      bulletDirection = "right";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else if (bulletDirection === "left") {
+      bulletDirection = "up";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else {
+      changePlayer();
+    }
+  } else if (element.style.transform === "rotate(180deg)") {
+    if (bulletDirection === "up") {
+      bulletDirection = "right";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else if (bulletDirection === "left") {
+      bulletDirection = "down";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else {
+      changePlayer();
+    }
+  } else if (element.style.transform === "rotate(270deg)") {
+    if (bulletDirection === "up") {
+      bulletDirection = "left";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else if (bulletDirection === "right") {
+      bulletDirection = "down";
+      moveBullet(location, newRow, newColumn, bulletDirection);
+    } else {
+      changePlayer();
+    }
+  }
+}
+function handleRicochetCollision(
+  element,
+  newRow,
+  newColumn,
+  bulletDirection,
+  location
+) {
+  console.log(element.style.transform);
+  if (
+    element.style.transform === "rotate(0deg)" ||
+    element.style.transform === "rotate(180deg)"
+  ) {
+    switch (bulletDirection) {
+      case "up":
+        bulletDirection = "right";
+        break;
+      case "down":
+        bulletDirection = "left";
+        break;
+      case "left":
+        bulletDirection = "down";
+        break;
+      case "right":
+        bulletDirection = "up";
+        break;
+    }
+    moveBullet(location, newRow, newColumn, bulletDirection);
+  } else if (
+    element.style.transform === "rotate(90deg)" ||
+    element.style.transform === "rotate(270deg)"
+  ) {
+    switch (bulletDirection) {
+      case "up":
+        bulletDirection = "left";
+        break;
+      case "down":
+        bulletDirection = "right";
+        break;
+      case "left":
+        bulletDirection = "up";
+        break;
+      case "right":
+        bulletDirection = "down";
+        break;
+    }
+    moveBullet(location, newRow, newColumn, bulletDirection);
+  }
+  console.log(bulletDirection);
+  
 }
