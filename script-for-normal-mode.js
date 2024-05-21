@@ -5,18 +5,26 @@ const playerDisplay = document.querySelector("#turnspan");
 const leftBtn = document.querySelector("#left");
 const rightBtn = document.querySelector("#right");
 const resetButton = document.querySelector("#reset");
+const pauseButton = document.querySelector("#pause");
+const resumeButton = document.querySelector("#resume");
+const pausePopup = document.querySelector("#pause-popup");
+const winnerNotice = document.querySelector("#winner-notice");
+const playAgainBtn = document.querySelector("#play-again");
+
 const timer = document.querySelector("#timertext");
 
 let highlightedSquares = [];
 let selectedPiece = null;
 let currentPlayer = "green";
 let ricochetRotation = {};
+let bulletDirection = "";
+let cannonCoords;
+let bulletSpeed = 100;
+
+//bools
 let gameOver = false;
 let gamePaused = false;
 let isBulletMoving = false;
-let bulletDirection = "";
-let cannonCoords;
-let bulletSpeed = 150;
 rightBtn.disabled = true;
 leftBtn.disabled = true;
 
@@ -67,10 +75,49 @@ function resetGame() {
     createBoard();
     rightBtn.disabled = true;
     leftBtn.disabled = true;
+    pauseButton.disabled = false;
   }
+}
+function pauseGame() {
+  if (!isBulletMoving) {
+    gamePaused = true;
+    isBulletMoving = false;
+    // gameBoard.innerHTML = "";
+    pausePopup.style.visibility = "visible";
+    pauseButton.disabled = true;
+  }
+}
+function resumeGame() {
+  gamePaused = false;
+  pausePopup.style.visibility = "hidden";
+  pauseButton.disabled = false;
+}
+function gameWin(element, currentLocation) {
+  currentLocation.removeChild(bulletDiv);
+  
+  console.log("game over");
+  gameOver = true;
+  isBulletMoving = false;
+  pauseButton.disabled = true;
+  if (element.firstElementChild.classList.contains("blue")) {
+    document.getElementById("winner-text").textContent = "Green Won!";
+  } else {
+    document.getElementById("winner-text").textContent = "Blue Won!";
+  }
+  element.innerHTML = "";
+  element.innerHTML = gameOverCoin;
+  winnerNotice.style.visibility = "visible";
+}
+function playAgain() {
+  winnerNotice.style.visibility = "hidden";
+  resetGame();
 }
 
 resetButton.addEventListener("click", resetGame);
+pauseButton.addEventListener("click", pauseGame);
+resumeButton.addEventListener("click", resumeGame);
+playAgainBtn.addEventListener("click", playAgain);
+
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
@@ -472,9 +519,7 @@ function handleBulletCollision(
     isBulletMoving = false;
     changePlayer();
   } else if (element.children[0].id == "titan") {
-    currentLocation.removeChild(bulletDiv);
-    isBulletMoving = false;
-    changePlayer();
+    gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
     handleSemiRicochetCollision(element, newRow, newColumn, currentLocation);
   } else if (element.children[0].id == "ricochet") {

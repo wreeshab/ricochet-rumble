@@ -22,7 +22,8 @@ body {
 h1 {
     font-size: 50px;
     margin-bottom: 10px;
-    color: antiquewhite;
+    color: #F8EBD1;
+    margin-top: 20px;
 }
 
 #control-center {
@@ -179,10 +180,11 @@ button:disabled {
     box-shadow: 0;
     border: 0;
 }
-#timertext{
-    width:50px ;
+
+#timertext {
+    width: 50px;
     font-family: 'Courier New', Courier, monospace;
-    margin:5px 5px 0 3px;
+    margin: 5px 5px 0 3px;
     font-size: 1em;
 }
 
@@ -200,14 +202,109 @@ button:disabled {
 }
 
 .square .bullet svg {
-    height: 25px;
-    width: 25px;
-}
-.bullet{
-    position: absolute;
+    height: 18px;
+    width: 18px;
 }
 
-@media screen and (max-width: 420px) {
+.bullet {
+    position: absolute;
+
+}
+
+#pause-popup {
+    height: 100vh;
+    width: 100%;
+    background-color: #0000007d;
+    position: absolute;
+    visibility: hidden;
+    transition: 0.1s;
+}
+
+#pause-inside-div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 150px;
+    width: 300px;
+    background-color: rgba(216, 230, 230, 0.985);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 30px;
+    backdrop-filter: blur(20px);
+}
+
+#pause-inside-div h2 {
+    margin-top: 20px;
+}
+
+#pause-inside-div div {
+    width: 250px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#pause-inside-div div button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: 900;
+    border-radius: 50px;
+    margin-bottom: 18px;
+}
+
+#pause-inside-div div button:hover {
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.524);
+}
+
+#pause-inside-div div button:active {
+    opacity: .5;
+}
+
+#winner-notice {
+    height: 200px;
+    width: 300px;
+    background-color: aliceblue;
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(0, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-radius: 40px;
+    visibility: hidden;
+}
+
+#winner-notice div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 75%;
+}
+
+#winner-notice div button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: 900;
+    border-radius: 50px;
+    margin-bottom: 18px;
+}
+
+#winner-img {
+    width: 75px;
+    height: 75px;
+
+}
+
+@media screen and (max-width: 450px) {
     body {
         display: flex;
         flex-direction: column;
@@ -277,5 +374,3 @@ button:disabled {
         scale: .7;
     }
 }
-
-
