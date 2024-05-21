@@ -1,12 +1,12 @@
 
-let startPieces = ["", "", "", "", topTitan, "", topCannon, "",
-"", "", topTank,topSemiRicochet, topRicochet, "", "",  "",
+let startPieces = ["", "", "",topCannon, "", topTitan, "",  "",
+topTank ,topSemiRicochet,"" ,topRicochet, "", "", "",  "",
 "", "", "", "", "", "", "", "",
 "", "", "", "", "", "", "", "",
 "", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"",bottomRicochet, "", "", "",  bottomSemiRicochet, "", "",
-bottomTank, "", "", "", bottomCannon, "", "", bottomTitan
+"", "", bottomRicochet, "", "", bottomSemiRicochet, "", "",
+"","", "","", "", "", "","",
+bottomTank, "", "",bottomCannon, "",  "", "", bottomTitan
 ];
 
 const initialPieces = ["", "", "", "", topTitan, "", topCannon, "",
@@ -32,6 +32,4 @@ const bluePieces = [
     bottomSemiRicochet,
     bottomTank,
     bottomTitan,
-  ];
-
-
+  ];  
