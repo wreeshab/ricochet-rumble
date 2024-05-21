@@ -465,7 +465,7 @@ function handleBulletCollision(
   if (
     element.children[0].id == "tank" ||
     element.children[0].id == "topCannon" ||
-    element.children[0].id == "bottomCannon"
+    element.children[0].id == "bottomCanon"
   ) {
     console.log("hit", element.children[0].id);
     currentLocation.removeChild(bulletDiv);
@@ -476,91 +476,63 @@ function handleBulletCollision(
     isBulletMoving = false;
     changePlayer();
   } else if (element.children[0].id == "semiRicochet") {
-    handleSemiRicochetCollision(
-      element,
-      newRow,
-      newColumn,
-      bulletDirection,
-      currentLocation
-    );
+    handleSemiRicochetCollision(element, newRow, newColumn, currentLocation);
   } else if (element.children[0].id == "ricochet") {
-    handleRicochetCollision(
-      element,
-      newRow,
-      newColumn,
-      bulletDirection,
-      currentLocation
-    );
+    handleRicochetCollision(element, newRow, newColumn, currentLocation);
   }
 }
-function handleSemiRicochetCollision(
-  element,
-  newRow,
-  newColumn,
-  bulletDirection,
-  location
-) {
+function removeBullet(location) {
+  location.removeChild(bulletDiv);
+  isBulletMoving = false;
+  changePlayer();
+}
+function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   console.log(element.style.transform);
   console.log(bulletDirection);
+
   if (element.style.transform === "rotate(0deg)") {
+    console.log(location);
     if (bulletDirection === "down") {
       bulletDirection = "left";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else if (bulletDirection === "right") {
       bulletDirection = "up";
-      console.log("hi");
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
-      console.log(location);
-      location.removeChild(bulletDiv);
       isBulletMoving = false;
-      changePlayer();
     }
   } else if (element.style.transform === "rotate(90deg)") {
     if (bulletDirection === "down") {
       bulletDirection = "right";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else if (bulletDirection === "left") {
       bulletDirection = "up";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
-      location.removeChild(bulletDiv);
       isBulletMoving = false;
-      changePlayer();
     }
   } else if (element.style.transform === "rotate(180deg)") {
     if (bulletDirection === "up") {
       bulletDirection = "right";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else if (bulletDirection === "left") {
       bulletDirection = "down";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
-      location.removeChild(bulletDiv);
       isBulletMoving = false;
-      changePlayer();
     }
   } else if (element.style.transform === "rotate(270deg)") {
     if (bulletDirection === "up") {
       bulletDirection = "left";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else if (bulletDirection === "right") {
       bulletDirection = "down";
-      moveBullet(location, newRow, newColumn, bulletDirection);
     } else {
-      location.removeChild(bulletDiv);
       isBulletMoving = false;
-      changePlayer();
     }
   }
+
+  if (!isBulletMoving) {
+    removeBullet(location);
+  } else {
+    shootBullet(newRow, newColumn, bulletDirection);
+  }
 }
-function handleRicochetCollision(
-  element,
-  newRow,
-  newColumn,
-  bulletDirection,
-  location
-) {
+
+function handleRicochetCollision(element, newRow, newColumn, location) {
   console.log(element.style.transform);
   if (
     element.style.transform === "rotate(0deg)" ||
@@ -580,7 +552,6 @@ function handleRicochetCollision(
         bulletDirection = "up";
         break;
     }
-    moveBullet(location, newRow, newColumn, bulletDirection);
   } else if (
     element.style.transform === "rotate(90deg)" ||
     element.style.transform === "rotate(270deg)"
@@ -599,7 +570,7 @@ function handleRicochetCollision(
         bulletDirection = "down";
         break;
     }
-    moveBullet(location, newRow, newColumn, bulletDirection);
   }
+  shootBullet(newRow, newColumn, bulletDirection);
   console.log(bulletDirection);
 }
