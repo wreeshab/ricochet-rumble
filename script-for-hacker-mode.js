@@ -19,7 +19,9 @@ let currentPlayer = "green";
 let ricochetRotation = {};
 let bulletDirection = "";
 let cannonCoords;
-let bulletSpeed = 200;
+let bulletSpeed = 100;
+let remainingSeconds = 21
+let timerId = null;
 
 //bools
 let gameOver = false;
@@ -40,24 +42,53 @@ function setRicoRotation() {
   }
 }
 setRicoRotation();
-// console.log(timer);
-function timerr() {
-  var sec = 30;
-  var timerr = setInterval(function () {
-    timer.innerHTML = "00:" + sec;
-    sec--;
-    if (sec < 0) {
-      clearInterval(timerr);
-    }
-  }, 1000);
-}
-// timerr()
-
 function equatePieces() {
   for (i = 0; i < width * width; i++) {
     startPieces[i] = initialPieces[i];
     console.log(`${startPieces[i]} ${i}`);
   }
+}
+function updateTimer() {
+  if (!gamePaused&&!gameOver) {
+    remainingSeconds--;
+    if (remainingSeconds < 10) {
+      timer.innerHTML = "00:0" + remainingSeconds;
+    } else {
+      timer.innerHTML = "00:" + remainingSeconds;
+    }
+
+    if (remainingSeconds <= 0) {
+      clearInterval(timerId);
+      timer.innerHTML = "00:00";
+      // Player loses if the timer runs out
+      handlePlayerLossByTime(currentPlayer);
+    }
+  }
+}
+
+function startTimer() {
+  if (timerId) clearInterval(timerId);
+  // remainingSeconds = 21; 
+  // timer.innerHTML = "00:21";
+  timerId = setInterval(updateTimer, 1000);
+}
+
+startTimer();
+
+function pauseGame() {
+  if (!isBulletMoving) {
+    gamePaused = true;
+    clearInterval(timerId); // Stop the timer
+    pausePopup.style.visibility = "visible";
+    pauseButton.disabled = true;
+  }
+}
+
+function resumeGame() {
+  gamePaused = false;
+  pausePopup.style.visibility = "hidden";
+  pauseButton.disabled = false;
+  startTimer(); // Start the timer
 }
 
 function resetGame() {
@@ -65,6 +96,9 @@ function resetGame() {
     gameOver = false;
     gamePaused = false;
     isBulletMoving = false;
+    remainingSeconds = 21; // Reset the timer
+    timer.innerHTML = "00:21";
+    startTimer(); // Start the timer
     playerDisplay.innerText = "green's";
     currentPlayer = "green";
     selectedPiece = null;
@@ -76,21 +110,8 @@ function resetGame() {
     rightBtn.disabled = true;
     leftBtn.disabled = true;
     pauseButton.disabled = false;
+    winnerNotice.style.visibility = "hidden";
   }
-}
-function pauseGame() {
-  if (!isBulletMoving) {
-    gamePaused = true;
-    isBulletMoving = false;
-    // gameBoard.innerHTML = "";
-    pausePopup.style.visibility = "visible";
-    pauseButton.disabled = true;
-  }
-}
-function resumeGame() {
-  gamePaused = false;
-  pausePopup.style.visibility = "hidden";
-  pauseButton.disabled = false;
 }
 function gameWin(element, currentLocation) {
   currentLocation.removeChild(bulletDiv);
@@ -100,7 +121,6 @@ function gameWin(element, currentLocation) {
   isBulletMoving = false;
   pauseButton.disabled = true;
   if (element.firstElementChild.classList.contains("blue")) {
-    console.log(document.getElementById("winner-text"))
     document.getElementById("winner-text").textContent = "Green Won!";
   } else {
     document.getElementById("winner-text").textContent = "Blue Won!";
@@ -113,7 +133,34 @@ function playAgain() {
   winnerNotice.style.visibility = "hidden";
   resetGame();
 }
+function handlePlayerLossByTime(player) {
+  gameOver = true;
 
+  isBulletMoving = false;
+  clearInterval(timerId); // Stop the timer
+  pauseButton.disabled = true;
+
+  if (player === "green") {
+    document.getElementById("winner-text").textContent = "Time Over: Blue Won!";
+  } else {
+    document.getElementById("winner-text").textContent = "Time Over: Green Won!";
+  }
+
+  winnerNotice.style.visibility = "visible";
+}
+
+function changePlayer() {
+  if (currentPlayer === "green") {
+    currentPlayer = "blue";
+    playerDisplay.innerText = "blue's";
+  } else {
+    currentPlayer = "green";
+    playerDisplay.innerText = "green's";
+  }
+  remainingSeconds = 21;
+  timer.innerHTML = "00:21";
+  startTimer(); // Reset and start the timer for the new player
+}
 resetButton.addEventListener("click", resetGame);
 pauseButton.addEventListener("click", pauseGame);
 resumeButton.addEventListener("click", resumeGame);
@@ -397,16 +444,6 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
   updateBoard();
 }
 
-function changePlayer() {
-  if (currentPlayer === "green") {
-    currentPlayer = "blue";
-    playerDisplay.innerText = "blue's";
-  } else {
-    currentPlayer = "green";
-    playerDisplay.innerText = "green's";
-  }
-}
-
 function updateBoard() {
   gameBoard.innerHTML = "";
   createBoard();
@@ -422,14 +459,14 @@ function handleCannonShoot(currentPlayer) {
       .getElementById("bottomCanon")
       .parentNode.getAttribute("square-id");
     bulletDirection = "up";
-    bulletDiv.style.transform = "rotate(0deg)"
+    bulletDiv.style.transform = "rotate(0deg)";
     console.log(cannonCoords);
   } else {
     cannonCoords = document
       .getElementById("topCannon")
       .parentNode.getAttribute("square-id");
     bulletDirection = "down";
-    bulletDiv.style.transform = "rotate(180deg)"
+    bulletDiv.style.transform = "rotate(180deg)";
   }
   //--
   // bulletDirection = row === 0 ? "down" : "up";
