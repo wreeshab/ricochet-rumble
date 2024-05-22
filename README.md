@@ -1,5 +1,7 @@
 <h1>RICOCHET RUMBLE</h1>
 
+Vercel link: https://ricochet-rumble-eight.vercel.app/
+
 <h2>Normal Mode</h2>
 
 1)<s>Create an 8x8 grid for the game board. Make the base config as shown in the video.</s>
