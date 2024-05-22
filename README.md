@@ -1,6 +1,5 @@
 <h1>RICOCHET RUMBLE</h1>
 
-Vercel link: https://ricochet-rumble-eight.vercel.app/
 
 <h2>Normal Mode</h2>
 
