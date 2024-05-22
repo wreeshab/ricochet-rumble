@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricochet Rumble</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="hacker-mode.css">
+    <link rel="shortcut icon" href="assets/deltaLogoGreen.png" type="image/x-icon">
+</head>
+
+<body>
+    <h1 id="title">Ricochet Rumble hacker</h1>
+
+
+    <div id="gameboard"></div>
+
+
+    <div>
+        <div id="control-center">
+            <div id="left-right">
+                <button class="rotate-buttons" id="left"><i id="left-icon"" class=" fa-solid
+                        fa-rotate-left"></i></button>
+                <button class="rotate-buttons" id="right"><i id="right-icon"
+                        class="fa-solid fa-rotate-right"></i></button>
+
+            </div>
+
+            <h2 id="whose-turn">It's <span id="turnspan">green's</span> turn</h2>
+            <div id="control-center-child">
+                <div id="timer-div"><img src="assets/stopwatch.png" alt=""><span id="timertext">00:30</span></div>
+                <button id="pause"><img src="assets/pause-button.png" alt=""> Pause</button>
+                <button id="reset"><img src="assets/reset-btn.png" alt="">Reset</button>
+            </div>
+        </div>
+    </div>
+    <div id="pause-popup">
+        <div id="pause-inside-div">
+            <h2>Game Paused</h2>
+            <div>
+                <button id="resume">Resume</button>
+                <button class="quit">Quit</button>
+            </div>
+
+        </div>
+    </div>
+    <div id="winner-notice">
+        <img src="assets/won.png" alt="" id="winner-img"">
+        <h2 id="winner-text">Blue Won</h2>
+        <div>
+            <button id="play-again">Play Again</button>
+            <button id="quit-game">Quit</button>
+        </div>
+
+
+    </div>
+
+    <script src="pieces/pieces.js"></script>
+    <script src="pieces/start-pieces.js"></script>
+    <script src="script-for-hacker-mode.js"></script>
+
+</body>
+
+</html>
