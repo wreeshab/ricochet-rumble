@@ -10,13 +10,39 @@
 body {
     display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     min-height: 100vh;
     width: 100%;
     background: url(assets/background3.jpg);
     background-size: cover;
 
+}
+
+#center-div {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 700px;
+    width: 33.3333%;
+
+}
+
+#right-div {
+    height: 100vh;
+    width: 33.333%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#left-div {
+    height: 100vh;
+    width: 33.333%;
 }
 
 h1 {
@@ -303,9 +329,48 @@ button:disabled {
     width: 75px;
     height: 75px;
 }
-#directionalBullet{
+
+#directionalBullet {
     height: 45px;
     width: 45px;
+}
+
+#game-state-history {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 200px;
+    width: 400px;
+    box-shadow: 5px 5px 10px #6a8cf3;
+    background-color: rgba(222, 184, 135, 0.565);
+    backdrop-filter: blur(20px);
+    padding: 5px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    box-sizing: border-box;
+    margin: 5px;
+}
+
+/* WebKit-based browsers (Chrome, Safari) */
+#game-state-history::-webkit-scrollbar {
+    width: 8px;
+    /* Change the width of the scrollbar */
+}
+
+#game-state-history::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Background of the scrollbar track */
+}
+
+#game-state-history::-webkit-scrollbar-thumb {
+    background: #6a8cf3;
+    /* Color of the scrollbar thumb */
+    border-radius: 4px;
+    /* Rounded corners for the scrollbar thumb */
+}
+
+#game-state-history::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Color of the scrollbar thumb on hover */
 }
 
 @media screen and (max-width: 450px) {

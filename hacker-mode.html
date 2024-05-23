@@ -11,28 +11,38 @@
 </head>
 
 <body>
-    <h1 id="title">Ricochet Rumble hacker</h1>
+    <div id="left-div"></div>
+    <div id="center-div">
+        <h1 id="title">Ricochet Rumble hacker</h1>
 
 
-    <div id="gameboard"></div>
-    <div>
-        <div id="control-center">
-            <div id="left-right">
-                <button class="rotate-buttons" id="left"><i id="left-icon"" class=" fa-solid
-                        fa-rotate-left"></i></button>
-                <button class="rotate-buttons" id="right"><i id="right-icon"
-                        class="fa-solid fa-rotate-right"></i></button>
+        <div id="gameboard"></div>
+        <div>
+            <div id="control-center">
+                <div id="left-right">
+                    <button id="undo">Undo</button>
+                    <button class="rotate-buttons" id="left"><i id="left-icon"" class=" fa-solid
+                            fa-rotate-left"></i></button>
+                    <button class="rotate-buttons" id="right"><i id="right-icon"
+                            class="fa-solid fa-rotate-right"></i></button>
+                    <!-- <button id="redo">Redo</button> -->
+                </div>
 
-            </div>
-
-            <h2 id="whose-turn">It's <span id="turnspan">green's</span> turn</h2>
-            <div id="control-center-child">
-                <div id="timer-div"><img src="assets/stopwatch.png" alt=""><span id="timertext">00:30</span></div>
-                <button id="pause"><img src="assets/pause-button.png" alt=""> Pause</button>
-                <button id="reset"><img src="assets/reset-btn.png" alt="">Reset</button>
+                <h2 id="whose-turn">It's <span id="turnspan">green's</span> turn</h2>
+                <div id="control-center-child">
+                    <div id="timer-div"><img src="assets/stopwatch.png" alt=""><span id="timertext">00:21</span></div>
+                    <button id="pause"><img src="assets/pause-button.png" alt=""> Pause</button>
+                    <button id="reset"><img src="assets/reset-btn.png" alt="">Reset</button>
+                </div>
             </div>
         </div>
     </div>
+    <div id="right-div">
+        <div id="game-state-history" >
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Aperiam in quae doloribus, at iure explicabo! Explicabo, laudantium. Mollitia quam nisi facere nemo earum saepe ullam fuga! Beatae fuga quidem, consequuntur aperiam aliquid sapiente cum nam, repellendus molestias cupiditate placeat voluptatibus ipsa, sequi quasi distinctio. Ut nobis expedita hic nesciunt cupiditate excepturi, repellendus quibusdam corrupti ab dolorem adipisci aliquam quaerat ex ipsam deserunt quo cumque! Asperiores inventore quam aut ipsam voluptatibus, laboriosam natus porro sequi, cum, ex ipsa officiis. Mollitia, alias! Ex repudiandae officia quam sit quia laborum. Consequuntur eligendi natus delectus laudantium inventore, ullam quae, tempore, corporis quis maiores quas.
+        </div>
+    </div>
+    <!-- -----------------------------popups------------------- -->
     <div id="pause-popup">
         <div id="pause-inside-div">
             <h2>Game Paused</h2>
@@ -45,7 +55,7 @@
     </div>
     <div id="winner-notice">
         <img src="assets/won.png" alt="" id="winner-img"">
-        <h2 id="winner-text">Blue Won</h2>
+        <h2 id= "winner-text">Blue Won</h2>
         <div>
             <button id="play-again">Play Again</button>
             <button id="quit-game">Quit</button>
@@ -53,6 +63,9 @@
 
 
     </div>
+
+    
+
 
     <script src="pieces/pieces.js"></script>
     <script src="pieces/start-pieces.js"></script>

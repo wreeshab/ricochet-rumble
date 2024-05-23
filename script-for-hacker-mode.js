@@ -10,6 +10,7 @@ const resumeButton = document.querySelector("#resume");
 const pausePopup = document.querySelector("#pause-popup");
 const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
+const undoButton = document.querySelector("#undo");
 
 const timer = document.querySelector("#timertext");
 
@@ -19,9 +20,10 @@ let currentPlayer = "green";
 let ricochetRotation = {};
 let bulletDirection = "";
 let cannonCoords;
-let bulletSpeed = 100;
-let remainingSeconds = 21
+let bulletSpeed = 110;
+let remainingSeconds = 21;
 let timerId = null;
+let gameStateHistory = [];
 
 //bools
 let gameOver = false;
@@ -49,7 +51,7 @@ function equatePieces() {
   }
 }
 function updateTimer() {
-  if (!gamePaused&&!gameOver) {
+  if (!gamePaused && !gameOver) {
     remainingSeconds--;
     if (remainingSeconds < 10) {
       timer.innerHTML = "00:0" + remainingSeconds;
@@ -68,7 +70,7 @@ function updateTimer() {
 
 function startTimer() {
   if (timerId) clearInterval(timerId);
-  // remainingSeconds = 21; 
+  // remainingSeconds = 21;
   // timer.innerHTML = "00:21";
   timerId = setInterval(updateTimer, 1000);
 }
@@ -143,7 +145,8 @@ function handlePlayerLossByTime(player) {
   if (player === "green") {
     document.getElementById("winner-text").textContent = "Time Over: Blue Won!";
   } else {
-    document.getElementById("winner-text").textContent = "Time Over: Green Won!";
+    document.getElementById("winner-text").textContent =
+      "Time Over: Green Won!";
   }
 
   winnerNotice.style.visibility = "visible";
@@ -161,10 +164,38 @@ function changePlayer() {
   timer.innerHTML = "00:21";
   startTimer(); // Reset and start the timer for the new player
 }
+
+function saveGameState() {
+  const gameState = {
+    pieces: [...startPieces],
+    rotation: { ...ricochetRotation },
+    currentPlayer: currentPlayer,
+    remainingSeconds: remainingSeconds,
+  };
+  gameStateHistory.push(gameState);
+  console.log(gameStateHistory);
+}
+function undoLastMove() {
+  if (
+    gameStateHistory.length > 0 &&
+    !isBulletMoving &&
+    !gamePaused &&
+    !gameOver
+  ) {
+    const lastGameState = gameStateHistory.pop();
+    startPieces = lastGameState.pieces;
+    ricochetRotation = lastGameState.rotation;
+    currentPlayer = lastGameState.currentPlayer;
+    remainingSeconds = lastGameState.remainingSeconds;
+    updateBoard();
+  }
+}
+
 resetButton.addEventListener("click", resetGame);
 pauseButton.addEventListener("click", pauseGame);
 resumeButton.addEventListener("click", resumeGame);
 playAgainBtn.addEventListener("click", playAgain);
+undoButton.addEventListener("click", undoLastMove);
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
@@ -342,6 +373,7 @@ function enableRotationButtons(currentPosition) {
 }
 
 function handleRotationClick(degrees) {
+  saveGameState();
   const currentPosition = selectedPiece.row * width + selectedPiece.column;
 
   // Set the rotation angle to the provided degrees
@@ -372,6 +404,7 @@ function isValidPosition(row, column) {
 }
 
 function movePiece(oldRow, oldColumn, newRow, newColumn) {
+  saveGameState();
   startPieces[newRow * width + newColumn] =
     startPieces[oldRow * width + oldColumn];
   startPieces[oldRow * width + oldColumn] = "";
@@ -408,6 +441,7 @@ function highlightCannonBoxes(row, column) {
 }
 
 function moveCannon(oldRow, oldColumn, newRow, newColumn) {
+  saveGameState();
   const oldIndex = oldRow * width + oldColumn;
   const newIndex = newRow * width + newColumn;
 
@@ -424,6 +458,7 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
 }
 
 function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
+  saveGameState();
   const oldIndex = oldRow * width + oldColumn;
   const newIndex = newRow * width + newColumn;
 
@@ -487,7 +522,7 @@ function shootBullet(row, column, bulletDirection) {
 }
 function moveBullet(location, row, column, bulletDirection) {
   setTimeout(() => {
-    console.log(bulletDirection);
+    // console.log(bulletDirection);
     let newRow = row;
     let newColumn = column;
     switch (bulletDirection) {
@@ -528,7 +563,7 @@ function moveBullet(location, row, column, bulletDirection) {
         newBox.appendChild(bulletDiv);
         location = newBox;
         isBulletMoving = true;
-        console.log(bulletDirection);
+        // console.log(bulletDirection);
         moveBullet(location, newRow, newColumn, bulletDirection);
       }
     } else {

@@ -9,14 +9,14 @@ topTank ,topSemiRicochet,"" ,topRicochet, "", "", "",  "",
 bottomTank, "", "", "",bottomCannon,  "", "", bottomTitan
 ];
 
-const initialPieces = ["", "", "", "", topTitan, "", topCannon, "",
-"", "", topTank,topSemiRicochet, topRicochet, "", "",  "",
+const initialPieces = ["", "", "",topCannon, "", topTitan, "",  "",
+topTank ,topSemiRicochet,"" ,topRicochet, "", "", "",  "",
 "", "", "", "", "", "", "", "",
 "", "", "", "", "", "", "", "",
 "", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"",bottomRicochet, "", "", "",  bottomSemiRicochet, "", "",
-bottomTank, "", "", "", bottomCannon, "", "", bottomTitan
+"", "", "", "", "",  "", "","",
+"","", "",bottomRicochet, "", "", "",bottomSemiRicochet,
+bottomTank, "", "", "",bottomCannon,  "", "", bottomTitan
 ];
 
 const bluePieces = [
