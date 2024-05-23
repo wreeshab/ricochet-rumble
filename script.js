@@ -16,10 +16,3 @@ function createRaindrop() {
 }
 
 setInterval(createRaindrop, 30);
-let audio = new Audio("audio/main-page-audio.mp3");
-window.onload = function () {
-  audio.play();
-};
-audio.addEventListener("ended", function () {
-  audio.play();
-});

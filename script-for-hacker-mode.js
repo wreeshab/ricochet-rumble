@@ -11,7 +11,7 @@ const pausePopup = document.querySelector("#pause-popup");
 const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
-gameHistoryBoard = document.querySelector("#game-state-history")
+const gameHistoryBoard = document.querySelector("#game-state-history");
 
 const timer = document.querySelector("#timertext");
 
@@ -32,6 +32,23 @@ let gamePaused = false;
 let isBulletMoving = false;
 rightBtn.disabled = true;
 leftBtn.disabled = true;
+
+var cannonAudio = new Audio("audio/cannon.mp3");
+var ricochetAudio = new Audio("audio/ricohit.mp3");
+var gameOverAudio = new Audio("audio/gameover.mp3");
+var otherPieces = new Audio("audio/punch.mp3");
+var overallAudio = new Audio("audio/overall.mp3");
+
+window.addEventListener("click", () => {
+  if(!gamePaused && !gameOver) {
+    overallAudio.play();
+  overallAudio.loop = true;
+  overallAudio.volume = .4;
+  }
+});
+  
+  
+
 
 let bulletDiv = document.createElement("div");
 bulletDiv.classList.add("bullet");
@@ -84,6 +101,7 @@ function pauseGame() {
     clearInterval(timerId); // Stop the timer
     pausePopup.style.visibility = "visible";
     pauseButton.disabled = true;
+    overallAudio.pause();
   }
 }
 
@@ -92,6 +110,9 @@ function resumeGame() {
   pausePopup.style.visibility = "hidden";
   pauseButton.disabled = false;
   startTimer(); // Start the timer
+  overallAudio.play();
+  overallAudio.loop = true;
+  overallAudio.volume = .4;
 }
 
 function resetGame() {
@@ -114,6 +135,9 @@ function resetGame() {
     leftBtn.disabled = true;
     pauseButton.disabled = false;
     winnerNotice.style.visibility = "hidden";
+    overallAudio.play();
+  overallAudio.loop = true;
+  overallAudio.volume = .4;
   }
 }
 function gameWin(element, currentLocation) {
@@ -131,6 +155,8 @@ function gameWin(element, currentLocation) {
   element.innerHTML = "";
   element.innerHTML = gameOverCoin;
   winnerNotice.style.visibility = "visible";
+  overallAudio.pause()
+  gameOverAudio.play();
 }
 function playAgain() {
   winnerNotice.style.visibility = "hidden";
@@ -151,6 +177,8 @@ function handlePlayerLossByTime(player) {
   }
 
   winnerNotice.style.visibility = "visible";
+  overallAudio.pause()
+  gameOverAudio.play();
 }
 
 function changePlayer() {
@@ -188,7 +216,7 @@ function undoLastMove() {
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
     remainingSeconds = lastGameState.remainingSeconds;
-    
+
     playerDisplay.innerText = `${currentPlayer}'s`;
     updateBoard();
   }
@@ -514,6 +542,7 @@ function handleCannonShoot(currentPlayer) {
     parseInt(cannonCoords[1]),
     bulletDirection
   );
+  cannonAudio.play();
 }
 
 function shootBullet(row, column, bulletDirection) {
@@ -594,12 +623,15 @@ function handleBulletCollision(
     currentLocation.removeChild(bulletDiv);
     isBulletMoving = false;
     changePlayer();
+    otherPieces.play();
   } else if (element.children[0].id == "titan") {
     gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
     handleSemiRicochetCollision(element, newRow, newColumn, currentLocation);
+    ricochetAudio.play();
   } else if (element.children[0].id == "ricochet") {
     handleRicochetCollision(element, newRow, newColumn, currentLocation);
+    ricochetAudio.play();
   }
 }
 function removeBullet(location) {
@@ -610,7 +642,7 @@ function removeBullet(location) {
 function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   // console.log(bulletDirection);
-  
+
   console.log(element);
   if (element.style.transform === "rotate(0deg)") {
     console.log(location);
@@ -628,7 +660,6 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
       bulletDirection = "up";
     } else {
       isBulletMoving = false;
-
     }
   } else if (element.style.transform === "rotate(180deg)") {
     if (bulletDirection === "up") {
@@ -650,7 +681,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
 
   if (!isBulletMoving) {
     removeBullet(location);
-    deleteSemiRicochet(element)
+    deleteSemiRicochet(element);
     return;
   } else {
     shootBullet(newRow, newColumn, bulletDirection);
@@ -660,11 +691,11 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
 function deleteSemiRicochet(element) {
   // Clear the content of the square
   element.innerHTML = "";
-  
+
   // Get the row and column of the square
   const row = parseInt(element.getAttribute("square-id")[0]);
   const column = parseInt(element.getAttribute("square-id")[1]);
-  
+
   // Update the startPieces array to remove the semi-ricochet from the specified position
   startPieces[row * width + column] = "";
 }
