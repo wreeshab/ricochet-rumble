@@ -188,6 +188,8 @@ function undoLastMove() {
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
     remainingSeconds = lastGameState.remainingSeconds;
+    
+    playerDisplay.innerText = `${currentPlayer}'s`;
     updateBoard();
   }
 }
