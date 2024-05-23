@@ -11,6 +11,7 @@ const pausePopup = document.querySelector("#pause-popup");
 const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
+gameHistoryBoard = document.querySelector("#game-state-history")
 
 const timer = document.querySelector("#timertext");
 
@@ -47,7 +48,7 @@ setRicoRotation();
 function equatePieces() {
   for (i = 0; i < width * width; i++) {
     startPieces[i] = initialPieces[i];
-    console.log(`${startPieces[i]} ${i}`);
+    // console.log(`${startPieces[i]} ${i}`);
   }
 }
 function updateTimer() {
@@ -485,7 +486,7 @@ function updateBoard() {
   // updateRicochetRotation(); // Uncomment this line to update the rotation of ricochet pieces
 }
 
-console.log(currentPlayer);
+// console.log(currentPlayer);
 
 function handleCannonShoot(currentPlayer) {
   console.log(currentPlayer);
@@ -582,7 +583,6 @@ function handleBulletCollision(
   currentPlayer
 ) {
   console.log("collided with", element.children[0].id);
-
   if (
     element.children[0].id == "tank" ||
     element.children[0].id == "topCannon" ||
@@ -606,9 +606,10 @@ function removeBullet(location) {
   changePlayer();
 }
 function handleSemiRicochetCollision(element, newRow, newColumn, location) {
-  console.log(element.style.transform);
-  console.log(bulletDirection);
-
+  // console.log(element.style.transform);
+  // console.log(bulletDirection);
+  
+  console.log(element);
   if (element.style.transform === "rotate(0deg)") {
     console.log(location);
     if (bulletDirection === "down") {
@@ -625,6 +626,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
       bulletDirection = "up";
     } else {
       isBulletMoving = false;
+
     }
   } else if (element.style.transform === "rotate(180deg)") {
     if (bulletDirection === "up") {
@@ -646,10 +648,23 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
 
   if (!isBulletMoving) {
     removeBullet(location);
+    deleteSemiRicochet(element)
+    return;
   } else {
     shootBullet(newRow, newColumn, bulletDirection);
     rotateDirBullet();
   }
+}
+function deleteSemiRicochet(element) {
+  // Clear the content of the square
+  element.innerHTML = "";
+  
+  // Get the row and column of the square
+  const row = parseInt(element.getAttribute("square-id")[0]);
+  const column = parseInt(element.getAttribute("square-id")[1]);
+  
+  // Update the startPieces array to remove the semi-ricochet from the specified position
+  startPieces[row * width + column] = "";
 }
 
 function handleRicochetCollision(element, newRow, newColumn, location) {

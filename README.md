@@ -15,8 +15,8 @@
 
 <h2>Hacker Mode</h2>
 
-1)Implement the feature to undo and redo the moves. <br>
-2)Make the bullet destroy semi Ricochets when hit in the non reflecting surface.
+1)<s>Implement the feature to undo and redo the moves.</s> <br>
+2)<s>Make the bullet destroy semi Ricochets when hit in the non reflecting surface.</s>
 <br>
 3)Display the history of moves of each player. Store the history once the game ends in local storage.
 <br>
