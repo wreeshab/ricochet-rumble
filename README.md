@@ -16,17 +16,17 @@
 <h2>Hacker Mode</h2>
 
 1)<s>Implement the feature to undo and redo the moves.</s> <br>
-2)<s>Make the bullet destroy semi Ricochets when hit in the non reflecting surface.</s>
+2)<s>Make the bullet destroy semi Ricochets when hit in the non reflecting surface.(a small bug exists)</s>
 <br>
 3)Display the history of moves of each player. Store the history once the game ends in local storage.
 <br>
-4)Add game sound effects.
+4)<s>Add game sound effects.</s>
 <br>
 5)<s>Make the cannon shoot a Directional bullet (you can use an asset)</s>
 <br>
 6)Make the Ricochets swap with any piece (opponent's piece, too) except the Titans.
 <br>
-7)Make the tanks to allow the bullets to pass through from any one side.
+7)<s >Make the tanks to allow the bullets to pass through from any one side.</s>
 <br>
 
 <h2>Hacker++ Mode</h2>

@@ -40,15 +40,12 @@ var otherPieces = new Audio("audio/punch.mp3");
 var overallAudio = new Audio("audio/overall.mp3");
 
 window.addEventListener("click", () => {
-  if(!gamePaused && !gameOver) {
+  if (!gamePaused && !gameOver) {
     overallAudio.play();
-  overallAudio.loop = true;
-  overallAudio.volume = .4;
+    overallAudio.loop = true;
+    overallAudio.volume = 0.4;
   }
 });
-  
-  
-
 
 let bulletDiv = document.createElement("div");
 bulletDiv.classList.add("bullet");
@@ -112,7 +109,7 @@ function resumeGame() {
   startTimer(); // Start the timer
   overallAudio.play();
   overallAudio.loop = true;
-  overallAudio.volume = .4;
+  overallAudio.volume = 0.4;
 }
 
 function resetGame() {
@@ -136,8 +133,8 @@ function resetGame() {
     pauseButton.disabled = false;
     winnerNotice.style.visibility = "hidden";
     overallAudio.play();
-  overallAudio.loop = true;
-  overallAudio.volume = .4;
+    overallAudio.loop = true;
+    overallAudio.volume = 0.4;
   }
 }
 function gameWin(element, currentLocation) {
@@ -155,7 +152,7 @@ function gameWin(element, currentLocation) {
   element.innerHTML = "";
   element.innerHTML = gameOverCoin;
   winnerNotice.style.visibility = "visible";
-  overallAudio.pause()
+  overallAudio.pause();
   gameOverAudio.play();
 }
 function playAgain() {
@@ -177,7 +174,7 @@ function handlePlayerLossByTime(player) {
   }
 
   winnerNotice.style.visibility = "visible";
-  overallAudio.pause()
+  overallAudio.pause();
   gameOverAudio.play();
 }
 
@@ -615,7 +612,6 @@ function handleBulletCollision(
 ) {
   console.log("collided with", element.children[0].id);
   if (
-    element.children[0].id == "tank" ||
     element.children[0].id == "topCannon" ||
     element.children[0].id == "bottomCanon"
   ) {
@@ -624,6 +620,8 @@ function handleBulletCollision(
     isBulletMoving = false;
     changePlayer();
     otherPieces.play();
+  } else if (element.children[0].id == "tank") {
+    handleTankCollision(element,newRow,newColumn,currentLocation)
   } else if (element.children[0].id == "titan") {
     gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
@@ -639,6 +637,19 @@ function removeBullet(location) {
   isBulletMoving = false;
   changePlayer();
 }
+function handleTankCollision(element, newRow, newColumn, currentLocation) {
+  if (element.children[0].id === "tank") {
+    if (bulletDirection === "down" || bulletDirection === "up") {
+      console.log("hi");
+      removeBullet(currentLocation)
+    }
+    else if(bulletDirection === "right" || bulletDirection === "left"){
+      shootBullet(newRow, newColumn, bulletDirection)
+    }
+  }
+}
+
+
 function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   // console.log(bulletDirection);
@@ -698,6 +709,7 @@ function deleteSemiRicochet(element) {
 
   // Update the startPieces array to remove the semi-ricochet from the specified position
   startPieces[row * width + column] = "";
+  ricochetRotation[row * width + column] = 0;
 }
 
 function handleRicochetCollision(element, newRow, newColumn, location) {
