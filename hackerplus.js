@@ -40,11 +40,14 @@ var gameOverAudio = new Audio("audio/gameover.mp3");
 var otherPieces = new Audio("audio/punch.mp3");
 var overallAudio = new Audio("audio/overall.mp3");
 
+startPieces = randomOpening();
+initialPieces = randomOpening();
+
 window.addEventListener("click", () => {
   if (!gamePaused && !gameOver) {
     overallAudio.play();
     overallAudio.loop = true;
-    overallAudio.volume = 0.4;
+    overallAudio.volume = 0.37;
   }
 });
 
@@ -61,6 +64,7 @@ function setRicoRotation() {
 }
 setRicoRotation();
 function equatePieces() {
+  initialPieces = randomOpening()
   for (i = 0; i < width * width; i++) {
     startPieces[i] = initialPieces[i];
     // console.log(`${startPieces[i]} ${i}`);
