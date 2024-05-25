@@ -339,15 +339,25 @@ button:disabled {
     overflow-x: hidden;
     overflow-y: auto;
     height: 200px;
-    width: 400px;
+    width: 425px;
     box-shadow: 5px 5px 10px #6a8cf3;
-    background-color: rgba(222, 184, 135, 0.565);
+    background-color: rgba(135, 222, 216, 0.565);
     backdrop-filter: blur(20px);
     padding: 5px;
     border-radius: 7px;
     margin-bottom: 18px;
     box-sizing: border-box;
     margin: 5px;
+    padding: 12px;
+    text-align: center;
+}
+.moves-board-child{
+    font-family: poppins;
+    font-weight: 700;
+    margin: 5px 0;
+}
+#game-state-history h2{
+    position: sticky;
 }
 
 /* WebKit-based browsers (Chrome, Safari) */

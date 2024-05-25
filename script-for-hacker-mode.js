@@ -25,6 +25,7 @@ let bulletSpeed = 110;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
+let moveCount = 1;
 
 //bools
 let gameOver = false;
@@ -135,6 +136,9 @@ function resetGame() {
     overallAudio.play();
     overallAudio.loop = true;
     overallAudio.volume = 0.4;
+    localStorage.removeItem("gameStateHistory");
+    gameStateHistory = [];
+    moveCount = 1;
   }
 }
 function gameWin(element, currentLocation) {
@@ -154,10 +158,12 @@ function gameWin(element, currentLocation) {
   winnerNotice.style.visibility = "visible";
   overallAudio.pause();
   gameOverAudio.play();
+  saveGameStateHistoryToLocal();
 }
 function playAgain() {
   winnerNotice.style.visibility = "hidden";
   resetGame();
+  localStorage.removeItem("gameStateHistory");
 }
 function handlePlayerLossByTime(player) {
   gameOver = true;
@@ -176,6 +182,7 @@ function handlePlayerLossByTime(player) {
   winnerNotice.style.visibility = "visible";
   overallAudio.pause();
   gameOverAudio.play();
+  saveGameStateHistoryToLocal();
 }
 
 function changePlayer() {
@@ -213,10 +220,21 @@ function undoLastMove() {
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
     remainingSeconds = lastGameState.remainingSeconds;
-
+    logMove("Undo");
     playerDisplay.innerText = `${currentPlayer}'s`;
+    // changePlayer();
     updateBoard();
   }
+}
+function saveGameStateHistoryToLocal() {
+  localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
+}
+
+function logMove(description) {
+  const movesBoardChild = document.createElement("div");
+  movesBoardChild.classList.add("moves-board-child");
+  movesBoardChild.textContent = description;
+  gameHistoryBoard.append(movesBoardChild);
 }
 
 resetButton.addEventListener("click", resetGame);
@@ -278,14 +296,16 @@ gameBoard.addEventListener("click", (e) => {
         if (!isBulletMoving) {
           const parentNode = e.target.parentNode;
           console.log(e.target);
+          console.log(e.target.getAttribute("pieceName"));
           if (parentNode) {
             const boxId = parentNode.getAttribute("square-id");
             if (boxId) {
               const row = parseInt(boxId[0]);
               const column = parseInt(boxId[1]);
+              const pieceName = e.target.getAttribute("pieceName");
               const piece = startPieces[row * width + column];
               if (piece !== "") {
-                selectedPiece = { row, column }; // Set selectedPiece
+                selectedPiece = { row, column, pieceName }; // Set selectedPiece
                 if (piece === topCannon || piece === bottomCannon) {
                   highlightCannonBoxes(row, column);
                 } else if (
@@ -423,6 +443,11 @@ function handleRotationClick(degrees) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
+  logMove(
+    `${currentPlayer.toUpperCase()}: Rotated ${
+      selectedPiece.pieceName
+    } by ${degrees} degrees`
+  );
   handleCannonShoot(currentPlayer);
   updateBoard();
 }
@@ -436,6 +461,14 @@ function movePiece(oldRow, oldColumn, newRow, newColumn) {
   startPieces[newRow * width + newColumn] =
     startPieces[oldRow * width + oldColumn];
   startPieces[oldRow * width + oldColumn] = "";
+
+  // Log the move with the piece name
+  logMove(
+    `${currentPlayer.toUpperCase()}: Moved ${selectedPiece.pieceName} from (${
+      oldRow + 1
+    }, ${oldColumn + 1}) -> (${newRow + 1}, ${newColumn + 1})`
+  );
+
   handleCannonShoot(currentPlayer);
   updateBoard();
 }
@@ -480,6 +513,12 @@ function moveCannon(oldRow, oldColumn, newRow, newColumn) {
   } else {
     startPieces[newIndex] = bottomCannon;
   }
+
+  logMove(
+    `${currentPlayer.toUpperCase()}: Moved ${selectedPiece.pieceName} from (${
+      oldRow + 1
+    }, ${oldColumn + 1}) to (${newRow + 1}, ${newColumn + 1})`
+  );
   updateBoard();
   handleCannonShoot(currentPlayer);
   updateBoard();
@@ -501,6 +540,11 @@ function moveRicochet(oldRow, oldColumn, newRow, newColumn) {
   rightBtn.disabled = true;
   leftBtn.disabled = true;
 
+  logMove(
+    `${currentPlayer.toUpperCase()}: Moved ${selectedPiece.pieceName} from (${
+      oldRow + 1
+    }, ${oldColumn + 1}) to (${newRow + 1}, ${newColumn + 1})`
+  );
   handleCannonShoot(currentPlayer);
 
   // Update board
@@ -621,7 +665,7 @@ function handleBulletCollision(
     changePlayer();
     otherPieces.play();
   } else if (element.children[0].id == "tank") {
-    handleTankCollision(element,newRow,newColumn,currentLocation)
+    handleTankCollision(element, newRow, newColumn, currentLocation);
   } else if (element.children[0].id == "titan") {
     gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
@@ -641,14 +685,12 @@ function handleTankCollision(element, newRow, newColumn, currentLocation) {
   if (element.children[0].id === "tank") {
     if (bulletDirection === "down" || bulletDirection === "up") {
       console.log("hi");
-      removeBullet(currentLocation)
-    }
-    else if(bulletDirection === "right" || bulletDirection === "left"){
-      shootBullet(newRow, newColumn, bulletDirection)
+      removeBullet(currentLocation);
+    } else if (bulletDirection === "right" || bulletDirection === "left") {
+      shootBullet(newRow, newColumn, bulletDirection);
     }
   }
 }
-
 
 function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
@@ -700,6 +742,11 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   }
 }
 function deleteSemiRicochet(element) {
+  console.log(element.children[0].classList);
+  const lostPiece = element.children[0].classList.contains("blue")
+    ? "blue"
+    : "green";
+  console.log(lostPiece);
   // Clear the content of the square
   element.innerHTML = "";
 
@@ -710,6 +757,10 @@ function deleteSemiRicochet(element) {
   // Update the startPieces array to remove the semi-ricochet from the specified position
   startPieces[row * width + column] = "";
   ricochetRotation[row * width + column] = 0;
+
+  logMove(
+    `${lostPiece.toUpperCase()} lost a semi-ricochet at (${row}, ${column})`
+  );
 }
 
 function handleRicochetCollision(element, newRow, newColumn, location) {

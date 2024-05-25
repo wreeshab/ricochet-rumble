@@ -18,7 +18,7 @@
 1)<s>Implement the feature to undo and redo the moves.</s> <br>
 2)<s>Make the bullet destroy semi Ricochets when hit in the non reflecting surface.(a small bug exists)</s>
 <br>
-3)Display the history of moves of each player. Store the history once the game ends in local storage.
+3)<s>Display the history of moves of each player. Store the history once the game ends in local storage.</s>
 <br>
 4)<s>Add game sound effects.</s>
 <br>
