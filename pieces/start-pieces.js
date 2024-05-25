@@ -24,14 +24,12 @@ const bluePieces = [
     topRicochet,
     topRicochet,
     topSemiRicochet,
-    topSemiRicochet,
     topTitan,
     topTank,
   ];
 const greenPieces = [
     bottomRicochet,
     bottomRicochet,
-    bottomSemiRicochet,
     bottomSemiRicochet,
     bottomTank,
     bottomTitan
