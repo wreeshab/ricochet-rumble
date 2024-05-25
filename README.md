@@ -33,7 +33,7 @@
 
 1)Using the stored game history, implement a game replay feature.
 <br>
-2)Randomized Playable starting position.
+2)<s>Randomized Playable starting position.</s>
 <br>
 3)Animate the game movements (For e.g., smoother bullets)
 <br>
