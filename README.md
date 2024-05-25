@@ -21,7 +21,7 @@
 3)<s>Display the history of moves of each player. Store the history once the game ends in local storage.</s>
 <br>
 4)<s>Add game sound effects.</s>
-<br>
+<br>q
 5)<s>Make the cannon shoot a Directional bullet (you can use an asset)</s>
 <br>
 6)Make the Ricochets swap with any piece (opponent's piece, too) except the Titans.
