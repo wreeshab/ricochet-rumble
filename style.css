@@ -26,7 +26,7 @@ body {
 }
 
 h1 {
-    font-size: 40px;
+    font-size: 50px;
     text-shadow: 0 0 20px #29a314;
 }
 
@@ -120,3 +120,10 @@ button:active {
     }
 }
 
+footer{
+    position: absolute;
+    bottom: 2%;
+}
+h4{
+    font-size: 1rem;
+}
