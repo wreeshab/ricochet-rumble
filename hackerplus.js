@@ -12,6 +12,7 @@ const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
 const gameHistoryBoard = document.querySelector("#game-state-history");
+const replayButton = document.querySelector("#replay");
 
 const timer = document.querySelector("#timertext");
 
@@ -64,7 +65,7 @@ function setRicoRotation() {
 }
 setRicoRotation();
 function equatePieces() {
-  initialPieces = randomOpening()
+  initialPieces = randomOpening();
   for (i = 0; i < width * width; i++) {
     startPieces[i] = initialPieces[i];
     // console.log(`${startPieces[i]} ${i}`);
@@ -210,10 +211,12 @@ function saveGameState() {
     rotation: { ...ricochetRotation },
     currentPlayer: currentPlayer,
     remainingSeconds: remainingSeconds,
+    cannonShoot: true,
   };
   gameStateHistory.push(gameState);
   console.log(gameStateHistory);
 }
+
 function undoLastMove() {
   if (
     gameStateHistory.length > 0 &&
@@ -236,6 +239,57 @@ function saveGameStateHistoryToLocal() {
   localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
 }
 
+function loadGameStateHistoryFromLocal() {
+  const savedGameStateHistory = localStorage.getItem("gameStateHistory");
+  if (savedGameStateHistory) {
+    return JSON.parse(savedGameStateHistory);
+  } else {
+    return [];
+  }
+}
+
+function replayGame() {
+  const history = loadGameStateHistoryFromLocal();
+  let index = 0;
+  winnerNotice.style.visibility = "hidden";
+  timer.textContent = "replay"
+
+  if (history.length === 0) {
+    alert("No game history found for replay.");
+    return;
+  }
+  gamePaused = true;
+  pauseButton.disabled = true;
+  resumeButton.disabled = true;
+
+  function replayNextMove() {
+    if (index < history.length) {
+      const gameState = history[index];
+      startPieces = gameState.pieces;
+      ricochetRotation = gameState.rotation;
+      currentPlayer = gameState.currentPlayer;
+      remainingSeconds = gameState.remainingSeconds;
+      updateBoard();
+      if (gameState.cannonShot) {
+        shootCannon();
+      }
+
+      playerDisplay.innerText = `${currentPlayer}'s`;
+      index++;
+
+      setTimeout(replayNextMove, 1000);
+    } else {
+      gamePaused = false;
+      pauseButton.disabled = false;
+      resumeButton.disabled = false;
+      winnerNotice.style.visibility = "visible";
+      
+    }
+  }
+
+  replayNextMove();
+}
+
 function logMove(description) {
   const movesBoardChild = document.createElement("div");
   movesBoardChild.classList.add("moves-board-child");
@@ -248,6 +302,7 @@ pauseButton.addEventListener("click", pauseGame);
 resumeButton.addEventListener("click", resumeGame);
 playAgainBtn.addEventListener("click", playAgain);
 undoButton.addEventListener("click", undoLastMove);
+replayButton.addEventListener("click", replayGame);
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {

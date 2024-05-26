@@ -212,7 +212,7 @@ button:disabled {
     width: 50px;
     font-family: 'Courier New', Courier, monospace;
     margin: 5px 5px 0 3px;
-    font-size: 1em;
+    font-size: .85em;
 }
 
 .rotate-buttons:disabled:hover {
@@ -294,7 +294,7 @@ button:disabled {
 
 #winner-notice {
     height: 200px;
-    width: 300px;
+    width: 400px;
     background-color: aliceblue;
     position: absolute;
     top: 50%;
