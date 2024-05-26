@@ -22,7 +22,7 @@ let currentPlayer = "green";
 let ricochetRotation = {};
 let bulletDirection = "";
 let cannonCoords;
-let bulletSpeed = 110;
+let bulletSpeed = 100;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
@@ -151,7 +151,7 @@ function resetGame() {
 function gameWin(element, currentLocation) {
   currentLocation.removeChild(bulletDiv);
 
-  console.log("game over");
+  // console.log("game over");
   gameOver = true;
   isBulletMoving = false;
   pauseButton.disabled = true;
@@ -252,12 +252,13 @@ function replayGame() {
   const history = loadGameStateHistoryFromLocal();
   let index = 0;
   winnerNotice.style.visibility = "hidden";
-  timer.textContent = "replay"
+  timer.textContent = "replay";
 
   if (history.length === 0) {
     alert("No game history found for replay.");
     return;
   }
+  
   gamePaused = true;
   pauseButton.disabled = true;
   resumeButton.disabled = true;
@@ -267,27 +268,29 @@ function replayGame() {
       const gameState = history[index];
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
-      currentPlayer = gameState.currentPlayer;
+      currentPlayer = gameState.currentPlayer === "green" ? "green" : "blue"; // Assign currentPlayer correctly
       remainingSeconds = gameState.remainingSeconds;
       updateBoard();
-      if (gameState.cannonShot) {
-        shootCannon();
-      }
-
       playerDisplay.innerText = `${currentPlayer}'s`;
       index++;
-
-      setTimeout(replayNextMove, 1000);
+      console.log(currentPlayer)
+      setTimeout(() => {
+        replayNextMove();
+      }, 2000);
     } else {
-      gamePaused = false;
-      pauseButton.disabled = false;
-      resumeButton.disabled = false;
-      winnerNotice.style.visibility = "visible";
-      
+      showWinnerNotice(history);
     }
   }
 
   replayNextMove();
+}
+
+function showWinnerNotice(history) {
+  const lastMove = history[history.length - 1];
+  const winningPlayer = lastMove.currentPlayer;
+  winnerNotice.style.visibility = "visible";
+  document.getElementById("winner-text").textContent =
+    winningPlayer === "green" ? "Green Won!" : "Blue Won!";
 }
 
 function logMove(description) {
@@ -356,8 +359,8 @@ gameBoard.addEventListener("click", (e) => {
       if (e.target.classList.contains(currentPlayer)) {
         if (!isBulletMoving) {
           const parentNode = e.target.parentNode;
-          console.log(e.target);
-          console.log(e.target.getAttribute("pieceName"));
+          // console.log(e.target);
+          // console.log(e.target.getAttribute("pieceName"));
           if (parentNode) {
             const boxId = parentNode.getAttribute("square-id");
             if (boxId) {
@@ -491,7 +494,7 @@ function handleRotationClick(degrees) {
   if (ricochetRotation[currentPosition] < 0) {
     ricochetRotation[currentPosition] += 360;
   }
-  console.log(ricochetRotation[currentPosition]);
+  // console.log(ricochetRotation[currentPosition]);
   const toRotatePiece = gameBoard.querySelector(
     `[square-id="${selectedPiece.row}${selectedPiece.column}"]`
   );
@@ -621,14 +624,14 @@ function updateBoard() {
 // console.log(currentPlayer);
 
 function handleCannonShoot(currentPlayer) {
-  console.log(currentPlayer);
+  // console.log(currentPlayer);
   if (currentPlayer == "green") {
     cannonCoords = document
       .getElementById("bottomCanon")
       .parentNode.getAttribute("square-id");
     bulletDirection = "up";
     bulletDiv.style.transform = "rotate(0deg)";
-    console.log(cannonCoords);
+    // console.log(cannonCoords);
   } else {
     cannonCoords = document
       .getElementById("topCannon")
@@ -715,12 +718,12 @@ function handleBulletCollision(
   currentLocation,
   currentPlayer
 ) {
-  console.log("collided with", element.children[0].id);
+  // console.log("collided with", element.children[0].id);
   if (
     element.children[0].id == "topCannon" ||
     element.children[0].id == "bottomCanon"
   ) {
-    console.log("hit", element.children[0].id);
+    // console.log("hit", element.children[0].id);
     currentLocation.removeChild(bulletDiv);
     isBulletMoving = false;
     changePlayer();
@@ -745,7 +748,7 @@ function removeBullet(location) {
 function handleTankCollision(element, newRow, newColumn, currentLocation) {
   if (element.children[0].id === "tank") {
     if (bulletDirection === "down" || bulletDirection === "up") {
-      console.log("hi");
+      // console.log("hi");
       removeBullet(currentLocation);
     } else if (bulletDirection === "right" || bulletDirection === "left") {
       shootBullet(newRow, newColumn, bulletDirection);
@@ -757,7 +760,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   // console.log(bulletDirection);
 
-  console.log(element);
+  // console.log(element);
   if (element.style.transform === "rotate(0deg)") {
     console.log(location);
     if (bulletDirection === "down") {
@@ -803,11 +806,11 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   }
 }
 function deleteSemiRicochet(element) {
-  console.log(element.children[0].classList);
+  // console.log(element.children[0].classList);
   const lostPiece = element.children[0].classList.contains("blue")
     ? "blue"
     : "green";
-  console.log(lostPiece);
+  // console.log(lostPiece);
   // Clear the content of the square
   element.innerHTML = "";
 
@@ -825,7 +828,7 @@ function deleteSemiRicochet(element) {
 }
 
 function handleRicochetCollision(element, newRow, newColumn, location) {
-  console.log(element.style.transform);
+  // console.log(element.style.transform);
   if (
     element.style.transform === "rotate(0deg)" ||
     element.style.transform === "rotate(180deg)"
@@ -865,7 +868,7 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   }
   shootBullet(newRow, newColumn, bulletDirection);
   rotateDirBullet();
-  console.log(bulletDirection);
+  // console.log(bulletDirection);
 }
 function rotateDirBullet() {
   console.log(bulletDiv.style.transform);
