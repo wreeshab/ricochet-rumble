@@ -31,7 +31,7 @@
 
 <h2>Hacker++ Mode</h2>
 
-1)Using the stored game history, implement a game replay feature.
+1)<s>Using the stored game history, implement a game replay feature.</s>
 <br>
 2)<s>Randomized Playable starting position.</s>
 <br>

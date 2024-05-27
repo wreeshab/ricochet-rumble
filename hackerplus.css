@@ -235,6 +235,7 @@ button:disabled {
 
 .bullet {
     position: absolute;
+    z-index: -10;
 
 }
 

@@ -152,6 +152,7 @@ function resetGame() {
 }
 
 function gameWin(element, currentLocation) {
+  saveGameState()
   currentLocation.removeChild(bulletDiv);
 
   // console.log("game over");
@@ -176,6 +177,7 @@ function playAgain() {
   localStorage.removeItem("gameStateHistory");
 }
 function handlePlayerLossByTime(player) {
+  saveGameState()
   gameOver = true;
 
   isBulletMoving = false;
@@ -257,7 +259,10 @@ function redoLastMove() {
       currentPlayer: currentPlayer,
       remainingSeconds: remainingSeconds,
     });
-    console.log("Redo: Current state pushed to gameStateHistory:", gameStateHistory);
+    console.log(
+      "Redo: Current state pushed to gameStateHistory:",
+      gameStateHistory
+    );
     startPieces = redoGameState.pieces;
     ricochetRotation = redoGameState.rotation;
     currentPlayer = redoGameState.currentPlayer;
@@ -267,7 +272,6 @@ function redoLastMove() {
     updateBoard();
   }
 }
-
 
 function saveGameStateHistoryToLocal() {
   localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
@@ -281,9 +285,9 @@ function loadGameStateHistoryFromLocal() {
     return [];
   }
 }
-
 function replayGame() {
   const history = loadGameStateHistoryFromLocal();
+  console.log("history", history);
   let index = 0;
   winnerNotice.style.visibility = "hidden";
   timer.textContent = "replay";
@@ -292,7 +296,7 @@ function replayGame() {
     alert("No game history found for replay.");
     return;
   }
-  
+
   gamePaused = true;
   pauseButton.disabled = true;
   resumeButton.disabled = true;
@@ -302,15 +306,22 @@ function replayGame() {
       const gameState = history[index];
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
-      currentPlayer = gameState.currentPlayer === "green" ? "green" : "blue"; // Assign currentPlayer correctly
+      currentPlayer = gameState.currentPlayer;
       remainingSeconds = gameState.remainingSeconds;
-      updateBoard();
       playerDisplay.innerText = `${currentPlayer}'s`;
+
+      updateBoard();
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          replayNextMove();
+          resolve();
+        }, 2000);
+      }).then(() => {
+        setTimeout(() => {
+          handleCannonShoot(currentPlayer === "green" ? "blue" : "green");
+        },100);
+      });
       index++;
-      // console.log(currentPlayer)
-      setTimeout(() => {
-        replayNextMove();
-      }, 2000);
     } else {
       showWinnerNotice(history);
     }
