@@ -11,6 +11,7 @@ const pausePopup = document.querySelector("#pause-popup");
 const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
+const redoButton = document.querySelector("#redo");
 const gameHistoryBoard = document.querySelector("#game-state-history");
 const replayButton = document.querySelector("#replay");
 
@@ -26,6 +27,7 @@ let bulletSpeed = 100;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
+let redoStack = [];
 let moveCount = 1;
 
 //bools
@@ -35,6 +37,7 @@ let isBulletMoving = false;
 rightBtn.disabled = true;
 leftBtn.disabled = true;
 
+// Sounds
 var cannonAudio = new Audio("audio/cannon.mp3");
 var ricochetAudio = new Audio("audio/ricohit.mp3");
 var gameOverAudio = new Audio("audio/gameover.mp3");
@@ -204,7 +207,6 @@ function changePlayer() {
   timer.innerHTML = "00:21";
   startTimer(); // Reset and start the timer for the new player
 }
-
 function saveGameState() {
   const gameState = {
     pieces: [...startPieces],
@@ -214,7 +216,11 @@ function saveGameState() {
     cannonShoot: true,
   };
   gameStateHistory.push(gameState);
-  console.log(gameStateHistory);
+  if (redoStack.length > 0) {
+    redoStack = []; // Clear the redo stack if a new move is made
+  }
+  console.log("New move made: redoStack cleared");
+  console.log("Current gameStateHistory:", gameStateHistory);
 }
 
 function undoLastMove() {
@@ -225,16 +231,44 @@ function undoLastMove() {
     !gameOver
   ) {
     const lastGameState = gameStateHistory.pop();
+    redoStack.push({
+      pieces: [...startPieces],
+      rotation: { ...ricochetRotation },
+      currentPlayer: currentPlayer,
+      remainingSeconds: remainingSeconds,
+    });
+    console.log("Undo: Current state pushed to redoStack:", redoStack);
     startPieces = lastGameState.pieces;
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
     remainingSeconds = lastGameState.remainingSeconds;
     logMove("Undo");
     playerDisplay.innerText = `${currentPlayer}'s`;
-    // changePlayer();
     updateBoard();
   }
 }
+
+function redoLastMove() {
+  if (redoStack.length > 0 && !isBulletMoving && !gamePaused && !gameOver) {
+    const redoGameState = redoStack.pop();
+    gameStateHistory.push({
+      pieces: [...startPieces],
+      rotation: { ...ricochetRotation },
+      currentPlayer: currentPlayer,
+      remainingSeconds: remainingSeconds,
+    });
+    console.log("Redo: Current state pushed to gameStateHistory:", gameStateHistory);
+    startPieces = redoGameState.pieces;
+    ricochetRotation = redoGameState.rotation;
+    currentPlayer = redoGameState.currentPlayer;
+    remainingSeconds = redoGameState.remainingSeconds;
+    logMove("Redo");
+    playerDisplay.innerText = `${currentPlayer}'s`;
+    updateBoard();
+  }
+}
+
+
 function saveGameStateHistoryToLocal() {
   localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
 }
@@ -273,7 +307,7 @@ function replayGame() {
       updateBoard();
       playerDisplay.innerText = `${currentPlayer}'s`;
       index++;
-      console.log(currentPlayer)
+      // console.log(currentPlayer)
       setTimeout(() => {
         replayNextMove();
       }, 2000);
@@ -305,6 +339,7 @@ pauseButton.addEventListener("click", pauseGame);
 resumeButton.addEventListener("click", resumeGame);
 playAgainBtn.addEventListener("click", playAgain);
 undoButton.addEventListener("click", undoLastMove);
+redoButton.addEventListener("click", redoLastMove);
 replayButton.addEventListener("click", replayGame);
 
 function createBoard() {
@@ -762,7 +797,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
 
   // console.log(element);
   if (element.style.transform === "rotate(0deg)") {
-    console.log(location);
+    // console.log(location);
     if (bulletDirection === "down") {
       bulletDirection = "left";
     } else if (bulletDirection === "right") {
@@ -871,7 +906,7 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(bulletDirection);
 }
 function rotateDirBullet() {
-  console.log(bulletDiv.style.transform);
+  // console.log(bulletDiv.style.transform);
   switch (bulletDirection) {
     case "left":
       bulletDiv.style.transform = "rotate(270deg)";

@@ -11,6 +11,7 @@ const pausePopup = document.querySelector("#pause-popup");
 const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
+const redoButton = document.querySelector("#redo");
 const gameHistoryBoard = document.querySelector("#game-state-history");
 
 const timer = document.querySelector("#timertext");
@@ -25,6 +26,7 @@ let bulletSpeed = 110;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
+let redoStack = [];
 let moveCount = 1;
 
 //bools
@@ -199,17 +201,22 @@ function changePlayer() {
   timer.innerHTML = "00:21";
   startTimer(); // Reset and start the timer for the new player
 }
-
 function saveGameState() {
   const gameState = {
     pieces: [...startPieces],
     rotation: { ...ricochetRotation },
     currentPlayer: currentPlayer,
     remainingSeconds: remainingSeconds,
+    cannonShoot: true,
   };
   gameStateHistory.push(gameState);
-  console.log(gameStateHistory);
+  if (redoStack.length > 0) {
+    redoStack = []; // Clear the redo stack if a new move is made
+  }
+  console.log("New move made: redoStack cleared");
+  console.log("Current gameStateHistory:", gameStateHistory);
 }
+
 function undoLastMove() {
   if (
     gameStateHistory.length > 0 &&
@@ -218,16 +225,44 @@ function undoLastMove() {
     !gameOver
   ) {
     const lastGameState = gameStateHistory.pop();
+    redoStack.push({
+      pieces: [...startPieces],
+      rotation: { ...ricochetRotation },
+      currentPlayer: currentPlayer,
+      remainingSeconds: remainingSeconds,
+    });
+    console.log("Undo: Current state pushed to redoStack:", redoStack);
     startPieces = lastGameState.pieces;
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
     remainingSeconds = lastGameState.remainingSeconds;
     logMove("Undo");
     playerDisplay.innerText = `${currentPlayer}'s`;
-    // changePlayer();
     updateBoard();
   }
 }
+
+function redoLastMove() {
+  if (redoStack.length > 0 && !isBulletMoving && !gamePaused && !gameOver) {
+    const redoGameState = redoStack.pop();
+    gameStateHistory.push({
+      pieces: [...startPieces],
+      rotation: { ...ricochetRotation },
+      currentPlayer: currentPlayer,
+      remainingSeconds: remainingSeconds,
+    });
+    console.log("Redo: Current state pushed to gameStateHistory:", gameStateHistory);
+    startPieces = redoGameState.pieces;
+    ricochetRotation = redoGameState.rotation;
+    currentPlayer = redoGameState.currentPlayer;
+    remainingSeconds = redoGameState.remainingSeconds;
+    logMove("Redo");
+    playerDisplay.innerText = `${currentPlayer}'s`;
+    updateBoard();
+  }
+}
+
+
 function saveGameStateHistoryToLocal() {
   localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
 }
@@ -244,6 +279,7 @@ pauseButton.addEventListener("click", pauseGame);
 resumeButton.addEventListener("click", resumeGame);
 playAgainBtn.addEventListener("click", playAgain);
 undoButton.addEventListener("click", undoLastMove);
+redoButton.addEventListener("click", redoLastMove);
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
