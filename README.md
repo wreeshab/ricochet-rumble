@@ -1,5 +1,6 @@
 <h1>RICOCHET RUMBLE</h1>
 
+<h2><em>for responsive design checkout to Bot-Implementation branch</em></h2>
 
 <h2>Normal Mode</h2>
 
