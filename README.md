@@ -37,7 +37,12 @@
 <br>
 3)Animate the game movements (For e.g., smoother bullets)
 <br>
-4)Create a single-player mode where the opponent is a bot.
-<br>
 5)Add spells (For eg: spell which makes a piece passthrough for a move)
 <br>
+4)<s>Create a single-player mode where the opponent is a bot.</s>
+<br>
+
+##List of Bugs Found in Bot So Far
+1) say the bot is rotating one of its ricos/semiricos it'll rotate, no issues.... but but but if the same piece is moved by the bot in the next move, it'll rotate again to its initial position. The Dom structure is such that if a rico is rotated it parent node (ie .square) is rotated and not the svg element or the rico div. Upon moving the rico, that new parent will have style.transform = rotate(0deg) and old parent will have style.transform = rotate(90deg).
+Note: other pieces going to the old parent will have 90 deg rotation whichh is absurdd.
+2) if a semiRico is broken it is not visually reflected immediately (its being updated in the next move only) though the master array is updated simulatneously.
