@@ -324,7 +324,9 @@ function replayGame() {
       });
       index++;
     } else {
-      showWinnerNotice(history);
+      setTimeout(()=>{
+        showWinnerNotice(history);
+      },2000)
     }
   }
 
