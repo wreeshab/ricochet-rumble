@@ -12,6 +12,7 @@ const winnerNotice = document.querySelector("#winner-notice");
 const playAgainBtn = document.querySelector("#play-again");
 const undoButton = document.querySelector("#undo");
 const redoButton = document.querySelector("#redo");
+const swapButton = document.querySelector("#swap");
 const gameHistoryBoard = document.querySelector("#game-state-history");
 
 const timer = document.querySelector("#timertext");
@@ -33,6 +34,7 @@ let moveCount = 1;
 let gameOver = false;
 let gamePaused = false;
 let isBulletMoving = false;
+let ricoSwap = false;
 rightBtn.disabled = true;
 leftBtn.disabled = true;
 
@@ -251,7 +253,7 @@ function redoLastMove() {
       currentPlayer: currentPlayer,
       remainingSeconds: remainingSeconds,
     });
-    console.log("Redo: Current state pushed to gameStateHistory:", gameStateHistory);
+
     startPieces = redoGameState.pieces;
     ricochetRotation = redoGameState.rotation;
     currentPlayer = redoGameState.currentPlayer;
@@ -261,8 +263,6 @@ function redoLastMove() {
     updateBoard();
   }
 }
-
-
 function saveGameStateHistoryToLocal() {
   localStorage.setItem("gameStateHistory", JSON.stringify(gameStateHistory));
 }
@@ -280,6 +280,31 @@ resumeButton.addEventListener("click", resumeGame);
 playAgainBtn.addEventListener("click", playAgain);
 undoButton.addEventListener("click", undoLastMove);
 redoButton.addEventListener("click", redoLastMove);
+swapButton.addEventListener("click", swapRicochet);
+
+function swapRicochet() {
+  ricoSwap = true;
+  if (selectedPiece.pieceName === "Ricochet") {
+    clearHighlightedSquares();
+    const squares = document.querySelectorAll(".square");
+    squares.forEach((square) => {
+      if (square.firstChild) {
+        if (
+          (square.firstChild.id === "semiRicochet" ||
+            square.firstChild.id === "ricochet" ||
+            square.firstChild.id === "tank") &&
+          (selectedPiece.row !==
+            parseInt(square.getAttribute("square-id")[0]) ||
+            selectedPiece.column !==
+              parseInt(square.getAttribute("square-id")[1]))
+        )
+          // console.log(square.firstChild.id)
+          square.style.border = "5px ridge rgb(156,229,248)";
+        square.addEventListener("click", handleRicoSwap);
+      }
+    });
+  }
+}
 
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
@@ -325,11 +350,42 @@ function handleRicochetMove(event) {
     moveRicochet(selectedPiece.row, selectedPiece.column, row, column);
   }
 }
+function handleRicoSwap(e) {
+  if (selectedPiece) {
+    const row = parseInt(e.target.parentNode.getAttribute("square-id")[0]);
+    const column = parseInt(e.target.parentNode.getAttribute("square-id")[1]);
+    moveForSwap(selectedPiece.row, selectedPiece.column, row, column);
+  }
+}
+function moveForSwap(row, column, newRow, newColumn) {
+  let temp = startPieces[row * width + column];
+  startPieces[row * width + column] = startPieces[newRow * width + newColumn];
+  startPieces[newRow * width + newColumn] = temp;
+  const toBeSwappedPiece = document.querySelector(
+    `[square-id="${newRow}${newColumn}"]`
+  );
+  if (
+    toBeSwappedPiece.firstChild.id === "ricochet" ||
+    toBeSwappedPiece.firstChild.id === "semiRicochet" 
+  ) {
+    let tempRotation = ricochetRotation[row * width + column];
+    ricochetRotation[row * width + column] = ricochetRotation[newRow * width + newColumn];
+    ricochetRotation[newRow * width + newColumn] = tempRotation;
+  }
+  logMove(`${currentPlayer.toUpperCase()} swapped their ${selectedPiece.pieceName} for ${(currentPlayer === "green"?"blue":"green").toUpperCase()}'s ${toBeSwappedPiece.firstChild.id}`);
+
+  setTimeout(()=>{
+    updateBoard();
+    changePlayer()
+  },7) // really dont know how setTimeout solves the bug, but it does so yeh! :)
+  // changePlayer();
+  ricoSwap = false;
+}
 
 // ---------------------------------------- PRIMARY EVENT LISTENER-----------------------------------------------
 gameBoard.addEventListener("click", (e) => {
   if (!gameOver) {
-    if (!gamePaused) {
+    if (!gamePaused && !ricoSwap) {
       if (e.target.classList.contains(currentPlayer)) {
         if (!isBulletMoving) {
           const parentNode = e.target.parentNode;

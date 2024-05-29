@@ -68,7 +68,10 @@ h1 {
     margin: 10px;
     backdrop-filter: blur(10px);
 }
-
+#swap{
+    justify-content: center;
+    margin-top: 5px;
+}
 #control-center-child {
     display: flex;
     justify-content: space-between;
