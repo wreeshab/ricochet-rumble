@@ -201,7 +201,7 @@ function changePlayer() {
   if (currentPlayer === "green") {
     currentPlayer = "blue";
     playerDisplay.innerText = "blue's";
-    botMove();
+    setTimeout(botMove, 550);
   } else {
     currentPlayer = "green";
     playerDisplay.innerText = "green's";
