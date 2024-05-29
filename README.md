@@ -25,8 +25,8 @@
 <br>q
 5)<s>Make the cannon shoot a Directional bullet (you can use an asset)</s>
 <br>
-6)Make the Ricochets swap with any piece (opponent's piece, too) except the Titans.
-<br>
+6)<s>Make the Ricochets swap with any piece (opponent's piece, too) except the Titans.
+<br></s> <em>this feature is not implemented in hacker plus plus mode</em>
 7)<s >Make the tanks to allow the bullets to pass through from any one side.</s>
 <br>
 
