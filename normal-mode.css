@@ -316,6 +316,7 @@ button:disabled {
 
     h1 {
         text-align: center;
+        font-size: 25px;
     }
 
     #gameboard {
@@ -367,11 +368,23 @@ button:disabled {
         width: 10px;
     }
 
-}
+    #control-panel-parent {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-@media screen and (max-width: 420px) {
-    #control-center {
-        /* width: 300px; */
+    }
+
+    #timertext {
+        font-size: .7em;
+    }
+
+    #winner-notice {
         scale: .7;
+    }
+
+    #control-center {
+        scale: .8;
     }
 }

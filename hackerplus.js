@@ -152,7 +152,7 @@ function resetGame() {
 }
 
 function gameWin(element, currentLocation) {
-  saveGameState()
+  saveGameState();
   currentLocation.removeChild(bulletDiv);
 
   // console.log("game over");
@@ -177,7 +177,7 @@ function playAgain() {
   localStorage.removeItem("gameStateHistory");
 }
 function handlePlayerLossByTime(player) {
-  saveGameState()
+  saveGameState();
   gameOver = true;
 
   isBulletMoving = false;
@@ -201,6 +201,7 @@ function changePlayer() {
   if (currentPlayer === "green") {
     currentPlayer = "blue";
     playerDisplay.innerText = "blue's";
+    botMove();
   } else {
     currentPlayer = "green";
     playerDisplay.innerText = "green's";
@@ -319,11 +320,13 @@ function replayGame() {
       }).then(() => {
         setTimeout(() => {
           handleCannonShoot(currentPlayer === "green" ? "blue" : "green");
-        },100);
+        }, 100);
       });
       index++;
     } else {
-      showWinnerNotice(history);
+      setTimeout(()=>{
+        showWinnerNotice(history);
+      },2000)
     }
   }
 
@@ -343,6 +346,120 @@ function logMove(description) {
   movesBoardChild.classList.add("moves-board-child");
   movesBoardChild.textContent = description;
   gameHistoryBoard.append(movesBoardChild);
+}
+//here im assuming that the blue player is bot
+function botMove() {
+  if (gameOver || gamePaused || currentPlayer !== "blue") {
+    return;
+  }
+  const validMoves = getAllValidMovesForBot("blue");
+  if (validMoves.length === 0) {
+    handlePlayerLossByTime("blue");
+    return;
+  }
+  const randomIndex = Math.floor(Math.random() * validMoves.length);
+  const randomMove = validMoves[randomIndex];
+  executeBotMove(randomMove);
+}
+
+function getAllValidMovesForBot(player) {
+  const validMoves = [];
+  const parser = new DOMParser();
+
+  for (let i = 0; i < width * width; i++) {
+    const piece = startPieces[i];
+    const row = Math.floor(i / width);
+    const column = i % width;
+
+    // Parse the piece string into a DOM element
+    const doc = parser.parseFromString(piece, "text/html");
+    const pieceDOM = doc.querySelector("div");
+    // console.log(pieceDOM.parentNode);
+    if (pieceDOM && pieceDOM.getAttribute("class").includes(player)) {
+      const moves = getValidMovesForPieceForBot(row, column, pieceDOM);
+      validMoves.push(...moves);
+      // The below is for ricochets
+      if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
+        validMoves.push({ piece, row, column, type: "rotate" });
+      }
+    }
+  }
+  return validMoves;
+}
+
+function getValidMovesForPieceForBot(row, column, piece) {
+  const moves = [];
+  const directions = [];
+
+  if (piece.id === "topCannon" || piece.id === "bottomCanon") {
+    directions.push({ row: 0, column: -1 });
+    directions.push({ row: 0, column: 1 });
+  } else {
+    directions.push(
+      { row: -1, column: 0 }, // Up
+      { row: 1, column: 0 }, // Down
+      { row: 0, column: -1 }, // Left
+      { row: 0, column: 1 }, // Right
+      { row: -1, column: -1 }, // Up-Left
+      { row: -1, column: 1 }, // Up-Right
+      { row: 1, column: -1 }, // Down-Left
+      { row: 1, column: 1 } // Down-Right
+    );
+  }
+
+  directions.forEach((direction) => {
+    const newRow = row + direction.row;
+    const newColumn = column + direction.column;
+
+    // Check if the new position is valid
+    if (
+      isValidPosition(newRow, newColumn) &&
+      startPieces[newRow * width + newColumn] === ""
+    ) {
+      moves.push({
+        piece,
+        oldRow: row,
+        oldColumn: column,
+        row: newRow,
+        column: newColumn,
+        type: "move",
+      });
+    }
+  });
+  return moves;
+}
+function executeBotMove(move) {
+  console.log("move", move);
+  if (move.type === "move") {
+    movePiece(move.oldRow, move.oldColumn, move.row, move.column);
+  } else if (move.type === "rotate") {
+    rotatePieceForBot(move.row, move.column);
+  }
+  updateBoard();
+}
+function rotatePieceForBot(row, column) {
+  const pieceIndex = row * width + column;
+  const pieceHTML = startPieces[pieceIndex];
+
+  // Parse the piece HTML into a DOM element
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(pieceHTML, "text/html");
+  const pieceDOM = doc.querySelector("div");
+
+  if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
+    const currentRotation = ricochetRotation[pieceIndex] || 0;
+    const newRotation = (currentRotation + 90) % 360;
+    ricochetRotation[pieceIndex] = newRotation;
+
+    // Apply rotation to the actual DOM element in the game board
+    const actualPieceDOM = document.querySelector(`#${pieceDOM.id}`);
+    if (actualPieceDOM) {
+      actualPieceDOM.style.transform = `rotate(${newRotation}deg)`;
+    }
+  }
+  handleCannonShoot(currentPlayer);
+  updateBoard();
+  changePlayer();
 }
 
 resetButton.addEventListener("click", resetGame);
