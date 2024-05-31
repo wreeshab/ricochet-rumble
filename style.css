@@ -1,129 +1,129 @@
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Poppins&family=Press+Start+2P&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Poppins&family=Press+Start+2P&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    font-family: "Press Start 2P", system-ui;
-    color: #29a314;
+  margin: 0;
+  padding: 0;
+  font-family: "Press Start 2P", system-ui;
+  color: #29a314;
 }
 
 body {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: #151514;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #151514;
 }
 
 .mode-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 80%;
-    margin: 10px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 80%;
+  margin: 10px 0;
 }
 
 h1 {
-    font-size: 50px;
-    text-shadow: 0 0 20px #29a314;
+  font-size: 50px;
+  text-shadow: 0 0 20px #29a314;
 }
 
 h3 {
-    font-size: 20px;
-    text-shadow: 0 0 20px #29a314;
+  font-size: 20px;
+  text-shadow: 0 0 20px #29a314;
 }
 
 h2 {
-    font-size: 25px;
-    text-shadow: 0 0 20px #29a314;
-
+  font-size: 25px;
+  text-shadow: 0 0 20px #29a314;
 }
 
 .modes {
-    width: 26%;
-    height: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-    border: 3px #29a314 solid;
-    box-shadow: 0 0 20px #29a314;
-    min-width: 250px;
-    margin: 10px;
-    background-color: #151514;
-
+  width: 26%;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: 3px #29a314 solid;
+  box-shadow: 0 0 20px #29a314;
+  min-width: 250px;
+  margin: 10px;
+  background-color: #151514;
 }
 
 .modes:hover {
-    box-shadow: 0 0 20px #151514;
-    scale: 1.1;
-    transition: 0.5s;
+  box-shadow: 0 0 20px #151514;
+  scale: 1.1;
+  transition: 0.5s;
 }
 
 img {
-    width: 90%;
-    margin: 30px 0;
+  width: 90%;
+  margin: 30px 0;
 }
 
 h3 {
-    margin: 100px 20px 40px;
+  margin: 100px 20px 40px;
 }
 
 button {
-    background-color: #29a314;
-    color: #151514;
-    height: 50px;
-    width: 150px;
-    border-radius: 40px;
-    border: 3px #151514 solid;
-    box-shadow: 0 0 20px #29a314;
-    margin: 10px;
+  background-color: #29a314;
+  color: #151514;
+  height: 50px;
+  width: 150px;
+  border-radius: 40px;
+  border: 3px #151514 solid;
+  box-shadow: 0 0 20px #29a314;
+  margin: 10px;
 }
 
 button:hover {
-    background-color: #151514;
-    color: #29a314;
-    border: 3px #29a314 solid;
-    scale: 0.8;
-    transition: 0.5s;
+  background-color: #151514;
+  color: #29a314;
+  border: 3px #29a314 solid;
+  scale: 0.8;
+  transition: 0.5s;
 }
 
 button:active {
-    background-color: #29a314;
-    color: #151514;
-    border: 3px #151514 solid;
+  background-color: #29a314;
+  color: #151514;
+  border: 3px #151514 solid;
 }
 
 .rain-container {
-    position: relative;
-    overflow: hidden;
-    z-index: -5;
+  position: relative;
+  overflow: hidden;
+  z-index: -5;
 }
 
 .raindrop {
-    position: absolute;
-    bottom: 100%;
-    width: 4px;
-    background: #29a314;
-    animation: fall linear infinite;
-    border-radius: 0 0 20px 20px;
-    z-index: -4;
-    ;
+  position: absolute;
+  bottom: 100%;
+  width: 4px;
+  background: #29a314;
+  backdrop-filter: blur(10px);
+  border-radius: 0 0 20px 20px;
+  animation: fall linear infinite;
+  border-radius: 0 0 20px 20px;
+  z-index: -4;
+  box-shadow: 0 0 40px #29a314;
 }
 
 @keyframes fall {
-    to {
-        transform: translateY(100vh);
-    }
+  to {
+    transform: translateY(100vh);
+  }
 }
 
-footer{
-    position: absolute;
-    bottom: 2%;
+footer {
+  position: absolute;
+  bottom: 2%;
 }
-h4{
-    font-size: 1rem;
+h4 {
+  font-size: 1rem;
 }

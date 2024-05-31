@@ -38,17 +38,22 @@ let ricoSwap = false;
 rightBtn.disabled = true;
 leftBtn.disabled = true;
 
+
 var cannonAudio = new Audio("audio/cannon.mp3");
 var ricochetAudio = new Audio("audio/ricohit.mp3");
 var gameOverAudio = new Audio("audio/gameover.mp3");
 var otherPieces = new Audio("audio/punch.mp3");
 var overallAudio = new Audio("audio/overall.mp3");
+var pauseAudio = new Audio("audio/pause.mp3");
+var playAudio = new Audio("audio/play.mp3");
+
+
 
 window.addEventListener("click", () => {
   if (!gamePaused && !gameOver) {
     overallAudio.play();
     overallAudio.loop = true;
-    overallAudio.volume = 0.4;
+    overallAudio.volume = 0.2;
   }
 });
 
@@ -104,6 +109,7 @@ function pauseGame() {
     pausePopup.style.visibility = "visible";
     pauseButton.disabled = true;
     overallAudio.pause();
+    pauseAudio.play();
   }
 }
 
@@ -112,9 +118,12 @@ function resumeGame() {
   pausePopup.style.visibility = "hidden";
   pauseButton.disabled = false;
   startTimer(); // Start the timer
-  overallAudio.play();
+  setTimeout(()=>{
+    overallAudio.play();
   overallAudio.loop = true;
-  overallAudio.volume = 0.4;
+  overallAudio.volume = 0.2;
+  },1300)
+  playAudio.play();
 }
 
 function resetGame() {
@@ -281,7 +290,7 @@ playAgainBtn.addEventListener("click", playAgain);
 undoButton.addEventListener("click", undoLastMove);
 redoButton.addEventListener("click", redoLastMove);
 swapButton.addEventListener("click", swapRicochet);
-
+swapButton.disabled = true;
 function swapRicochet() {
   ricoSwap = true;
   if (selectedPiece.pieceName === "Ricochet") {
@@ -377,6 +386,7 @@ function moveForSwap(row, column, newRow, newColumn) {
   },7) // really dont know how setTimeout solves the bug, but it does so yeh! :)
   // changePlayer();
   ricoSwap = false;
+  swapButton.disabled = true;
 }
 
 // ---------------------------------------- PRIMARY EVENT LISTENER-----------------------------------------------
@@ -405,6 +415,9 @@ gameBoard.addEventListener("click", (e) => {
                   piece === topSemiRicochet ||
                   piece === bottomSemiRicochet
                 ) {
+                  if(piece === topRicochet || piece === bottomRicochet){
+                    swapButton.disabled = false;
+                  }
                   highlightRicochetPieces(row, column);
                 } else {
                   highlightOtherPieces(row, column);

@@ -72,6 +72,9 @@ h1 {
     justify-content: center;
     margin-top: 5px;
 }
+button:hover:disabled{
+    cursor: not-allowed;
+}
 #control-center-child {
     display: flex;
     justify-content: space-between;
