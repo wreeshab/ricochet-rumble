@@ -233,7 +233,7 @@ function undoLastMove() {
       currentPlayer: currentPlayer,
       remainingSeconds: remainingSeconds,
     });
-    console.log("Undo: Current state pushed to redoStack:", redoStack);
+    // console.log("Undo: Current state pushed to redoStack:", redoStack);
     startPieces = lastGameState.pieces;
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
@@ -299,7 +299,7 @@ function swapRicochet() {
               parseInt(square.getAttribute("square-id")[1]))
         )
           // console.log(square.firstChild.id)
-          square.style.border = "5px ridge rgb(156,229,248)";
+          square.style.border = "5px solid #697cd9";
         square.addEventListener("click", handleRicoSwap);
       }
     });
@@ -364,14 +364,11 @@ function moveForSwap(row, column, newRow, newColumn) {
   const toBeSwappedPiece = document.querySelector(
     `[square-id="${newRow}${newColumn}"]`
   );
-  if (
-    toBeSwappedPiece.firstChild.id === "ricochet" ||
-    toBeSwappedPiece.firstChild.id === "semiRicochet" 
-  ) {
+  
     let tempRotation = ricochetRotation[row * width + column];
     ricochetRotation[row * width + column] = ricochetRotation[newRow * width + newColumn];
     ricochetRotation[newRow * width + newColumn] = tempRotation;
-  }
+  
   logMove(`${currentPlayer.toUpperCase()} swapped their ${selectedPiece.pieceName} for ${(currentPlayer === "green"?"blue":"green").toUpperCase()}'s ${toBeSwappedPiece.firstChild.id}`);
 
   setTimeout(()=>{

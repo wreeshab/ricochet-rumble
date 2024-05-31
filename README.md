@@ -1,8 +1,8 @@
 <h1>RICOCHET RUMBLE</h1>
 
-<h2><em>for responsive design checkout to Bot-Implementation branch</em></h2>
 
-<h2>Normal Mode</h2>
+
+<h2>Normal Mode</h2> <b>OVER</b>
 
 1)<s>Create an 8x8 grid for the game board. Make the base config as shown in the video.</s>
 <br>
@@ -14,7 +14,8 @@
 <br>
 5)<s>Add pause, resume and reset feature.</s>
 
-<h2>Hacker Mode</h2>
+<h2>Hacker Mode</h2> <b>OVER</b>
+
 
 1)<s>Implement the feature to undo and redo the moves.</s> <br>
 2)<s>Make the bullet destroy semi Ricochets when hit in the non reflecting surface.(a small bug exists)</s>
@@ -27,10 +28,10 @@
 <br>
 6)<s>Make the Ricochets swap with any piece (opponent's piece, too) except the Titans.
 </s> <em>this feature is not implemented in hacker plus plus mode</em><br>
-7)<s >Make the tanks to allow the bullets to pass through from any one side.</s>
+7)<s>Make the tanks to allow the bullets to pass through from any one side.</s>
 <br>
 
-<h2>Hacker++ Mode</h2>
+<h2>Hacker++ Mode</h2> 
 
 1)<s>Using the stored game history, implement a game replay feature.</s>
 <br>
