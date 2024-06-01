@@ -49,3 +49,5 @@
 Note: other pieces going to the old parent will have 90 deg rotation whichh is absurdd.
 2) if a semiRico is broken it is not visually reflected immediately (its being updated in the next move only) though the master array is updated simulatneously.
 3) rico/semirico turning is not considered as a move => even after they rotate, one more move is getting executed => 2 bullets are being shot!!!!! 
+
+test
