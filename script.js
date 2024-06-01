@@ -15,4 +15,4 @@ function createRaindrop() {
   }, 40000);
 }
 
-setInterval(createRaindrop, 100);
+setInterval(createRaindrop, 500);
