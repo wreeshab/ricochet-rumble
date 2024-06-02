@@ -300,6 +300,7 @@ function loadGameStateHistoryFromLocal() {
     return [];
   }
 }
+
 function replayGame() {
   const history = loadGameStateHistoryFromLocal();
   winnerNotice.style.visibility = "hidden";
@@ -311,7 +312,7 @@ function replayGame() {
   let index = 0;
 
   function replayNextMove() {
-    if (index < history.length) {
+    if (index < history.length-1) {
       const gameState = history[index];
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
