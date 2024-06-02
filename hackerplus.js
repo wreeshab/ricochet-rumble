@@ -28,7 +28,7 @@ let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
 let redoStack = [];
-let whoWon = ""
+let whoWon = "";
 let moveCount = 1;
 
 //bools
@@ -47,7 +47,6 @@ var otherPieces = new Audio("audio/punch.mp3");
 var overallAudio = new Audio("audio/overall.mp3");
 var pauseAudio = new Audio("audio/pause.mp3");
 var playAudio = new Audio("audio/play.mp3");
-
 
 startPieces = randomOpening();
 initialPieces = randomOpening();
@@ -121,14 +120,13 @@ function resumeGame() {
   pausePopup.style.visibility = "hidden";
   pauseButton.disabled = false;
   startTimer(); // Start the timer
-  setTimeout(()=>{
+  setTimeout(() => {
     overallAudio.play();
-  overallAudio.loop = true;
-  overallAudio.volume = 0.2;
-  },1300)
+    overallAudio.loop = true;
+    overallAudio.volume = 0.2;
+  }, 1300);
   playAudio.play();
 }
-
 
 function resetGame() {
   if (!isBulletMoving) {
@@ -154,10 +152,11 @@ function resetGame() {
     overallAudio.loop = true;
     overallAudio.volume = 0.4;
     localStorage.removeItem("gameStateHistory");
-    localStorage.removeItem("whoWon")
+    localStorage.removeItem("whoWon");
     gameStateHistory = [];
     moveCount = 1;
     gameHistoryBoard.innerHTML = "";
+    document.getElementById("whose-turn").style.visibility = "visible";
   }
 }
 
@@ -171,10 +170,10 @@ function gameWin(element, currentLocation) {
   pauseButton.disabled = true;
   if (element.firstElementChild.classList.contains("blue")) {
     document.getElementById("winner-text").textContent = "Green Won!";
-    whoWon = "green"
+    whoWon = "green";
   } else {
     document.getElementById("winner-text").textContent = "Blue Won!";
-    whoWon = "blue"
+    whoWon = "blue";
   }
   localStorage.setItem("whoWon", JSON.stringify(whoWon));
   element.innerHTML = "";
@@ -199,14 +198,13 @@ function handlePlayerLossByTime(player) {
 
   if (player === "green") {
     document.getElementById("winner-text").textContent = "Time Over: Blue Won!";
-    whoWon = "blue"
+    whoWon = "blue";
   } else {
     document.getElementById("winner-text").textContent =
       "Time Over: Green Won!";
-      whoWon = "green"
+    whoWon = "green";
   }
   localStorage.setItem("whoWon", JSON.stringify(whoWon));
-
 
   winnerNotice.style.visibility = "visible";
   overallAudio.pause();
@@ -304,19 +302,13 @@ function loadGameStateHistoryFromLocal() {
 }
 function replayGame() {
   const history = loadGameStateHistoryFromLocal();
-  console.log("history", history);
-  let index = 0;
   winnerNotice.style.visibility = "hidden";
-  timer.textContent = "replay";
-
   if (history.length === 0) {
     alert("No game history found for replay.");
     return;
   }
-
-  gamePaused = true;
-  pauseButton.disabled = true;
-  resumeButton.disabled = true;
+  
+  let index = 0;
 
   function replayNextMove() {
     if (index < history.length) {
@@ -324,39 +316,45 @@ function replayGame() {
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
       currentPlayer = gameState.currentPlayer;
-      remainingSeconds = gameState.remainingSeconds;
-      playerDisplay.innerText = `${currentPlayer }'s`;
-
+      document.getElementById("whose-turn").style.visibility = "hidden";
       updateBoard();
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          replayNextMove();
-          resolve();
-        }, 4000);
-      }).then(() => {
-        setTimeout(() => {
-          handleCannonShoot(currentPlayer );
-        }, 100);
-      });
       index++;
-    } else {
-      setTimeout(()=>{
-        showWinnerNotice(history);
-      },2000)
+
+      // Check if it's Green's turn to move a piece and shoot
+      if (currentPlayer === "green") {
+        movePieceAndShoot("green").then(replayNextMove);
+      } else { // Blue's turn
+        movePieceAndShoot("blue").then(replayNextMove);
+      }
     }
   }
 
   replayNextMove();
 }
 
-function showWinnerNotice(history) {
-  const winnerReplay = localStorage.getItem("whoWon")
-  const lastMove = history[history.length - 1];
-  const winningPlayer = lastMove.currentPlayer;
-  winnerNotice.style.visibility = "visible";
-  document.getElementById("winner-text").textContent = winnerReplay;
-    // winningPlayer === "green" ? "Green Won!" : "Blue Won!";
+function movePieceAndShoot(player) {
+  return new Promise((resolve) => {
+    // Move the piece for the player
+    movePlayerPiece(player).then(() => {
+      // Handle cannon shoot for the player after moving the piece
+      handleCannonShoot(player);
+      resolve();
+    });
+  });
 }
+
+function movePlayerPiece(player) {
+  return new Promise((resolve) => {
+    // Perform the piece movement logic here
+    // For demonstration purposes, let's assume the movement takes 2 seconds
+    setTimeout(() => {
+      // Update the board after moving the piece
+      updateBoard();
+      resolve();
+    }, 4000); // Adjust delay time as needed
+  });
+}
+
 
 function logMove(description) {
   const movesBoardChild = document.createElement("div");
