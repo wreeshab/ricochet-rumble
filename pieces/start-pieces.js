@@ -1,39 +1,39 @@
 
-let startPieces = ["", "", "",topCannon, "", topTitan, "",  "",
-topTank ,topSemiRicochet,"" ,topRicochet, "", "", "",  "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "",  "", "","",
-"","", "",bottomRicochet, "", "", "",bottomSemiRicochet,
-bottomTank, "", "", "",bottomCannon,  "", "", bottomTitan
+let startPieces = ["", topCannon, "", "", "", "", topTitan, "",
+  topTank, "", "", topRicochet, "", topSemiRicochet, "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", bottomSemiRicochet, "", bottomRicochet, "", "", bottomTank,
+  "", bottomTitan, "", "", "", "", bottomCannon, ""
 ];
 
 
-let initialPieces = ["", "", "",topCannon, "", topTitan, "",  "",
-topTank ,topSemiRicochet,"" ,topRicochet, "", "", "",  "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "", "", "", "",
-"", "", "", "", "",  "", "","",
-"","", "",bottomRicochet, "", "", "",bottomSemiRicochet,
-bottomTank, "", "", "",bottomCannon,  "", "", bottomTitan
+let initialPieces = ["", topCannon, "", "", "", "", topTitan, "",
+  topTank, "", "", topRicochet, "", topSemiRicochet, "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", "", "", "", "", "", "",
+  "", "", bottomSemiRicochet, "", bottomRicochet, "", "", bottomTank,
+  "", bottomTitan, "", "", "", "", bottomCannon, ""
 ];
 
 const bluePieces = [
-    topRicochet,
-    topRicochet,
-    topSemiRicochet,
-    topTitan,
-    topTank,
-  ];
+  topRicochet,
+  topRicochet,
+  topSemiRicochet,
+  topTitan,
+  topTank,
+];
 const greenPieces = [
-    bottomRicochet,
-    bottomRicochet,
-    bottomSemiRicochet,
-    bottomTank,
-    bottomTitan
-];  
+  bottomRicochet,
+  bottomRicochet,
+  bottomSemiRicochet,
+  bottomTank,
+  bottomTitan
+];
 const blueCannons = [topCannon]
 const greenCannons = [bottomCannon]
 

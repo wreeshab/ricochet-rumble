@@ -722,10 +722,8 @@ function shootBullet(row, column, bulletDirection) {
 }
 
 function moveBullet(location, row, column, bulletDirection) {
-  // Clear previous animation classes
   bulletDiv.classList = "bullet";
 
-  // Apply the appropriate animation class based on the bullet direction
   switch (bulletDirection) {
     case "right":
       if (bulletDiv.parentNode.childNodes.length == 1)
@@ -849,6 +847,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
   // console.log(bulletDirection);
 
   // console.log(element);
+  const oldBulletDirection = bulletDirection;
   if (element.style.transform === "rotate(0deg)") {
     // console.log(location);
     if (bulletDirection === "down") {
@@ -890,7 +889,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
     return;
   } else {
     shootBullet(newRow, newColumn, bulletDirection);
-    rotateDirBullet();
+    rotateDirBullet(oldBulletDirection); 
   }
 }
 function deleteSemiRicochet(element) {
@@ -918,7 +917,8 @@ function deleteSemiRicochet(element) {
 function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   bulletDiv.classList = "bullet";
-
+  const oldBulletDirection = bulletDirection;
+  
   if (
     element.style.transform === "rotate(0deg)" ||
     element.style.transform === "rotate(180deg)"
@@ -957,23 +957,64 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
     }
   }
   shootBullet(newRow, newColumn, bulletDirection);
-  rotateDirBullet();
+  rotateDirBullet(oldBulletDirection);
   // console.log(bulletDirection);
 }
-function rotateDirBullet() {
+function rotateDirBullet(oldBulletDirection) {
+  bulletDiv.classList = "bullet" //clear prev animaations
   // console.log(bulletDiv.style.transform);
+  if(oldBulletDirection === "up"){
+    if(bulletDirection === "left"){
+    bulletDiv.classList.add("upLeftAnime")
+    }else if(bulletDirection === "right"){
+      bulletDiv.classList.add("upRightAnime")
+    }
+  }else if(oldBulletDirection === "down"){
+    if(bulletDirection === "right"){
+      bulletDiv.classList.add("downRightAnime")
+      }else if(bulletDirection === "left"){
+        bulletDiv.classList.add("downLeftAnime")
+      }
+  }else if(oldBulletDirection === "left"){
+    if(bulletDirection==="up"){
+      bulletDiv.classList.add("leftUpAnime")
+    }else if(bulletDirection === "down"){
+      bulletDiv.classList.add("leftDownAnime")
+    }
+  }else if(oldBulletDirection === "right"){
+    if(bulletDirection==="up"){
+      bulletDiv.classList.add("rightUpAnime")
+
+    }else if(bulletDirection === "down"){
+      bulletDiv.classList.add("rightDownAnime")
+    }
+  }
+
+
   switch (bulletDirection) {
     case "left":
-      bulletDiv.style.transform = "rotate(270deg)";
+      setTimeout(()=>{
+        bulletDiv.style.transform = "rotate(270deg)";
+      },bulletSpeed)
+      // bulletDiv.style.transform = "rotate(270deg)"
       break;
     case "right":
-      bulletDiv.style.transform = "rotate(90deg)";
+      setTimeout(()=>{
+        bulletDiv.style.transform = "rotate(90deg)";
+      },bulletSpeed)
+      // bulletDiv.style.transform = "rotate(90deg)"
       break;
     case "up":
-      bulletDiv.style.transform = "rotate(0deg)";
+      setTimeout(()=>{
+        bulletDiv.style.transform = "rotate(0deg)";
+      },bulletSpeed)
+      // bulletDiv.style.transform = "rotate(0deg)";
       break;
     case "down":
-      bulletDiv.style.transform = "rotate(180deg)";
+      setTimeout(()=>{
+        bulletDiv.style.transform = "rotate(180deg)";
+      },bulletSpeed)
+      // bulletDiv.style.transform = "rotate(180deg)";
       break;
   }
 }
