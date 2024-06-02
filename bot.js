@@ -28,6 +28,7 @@ let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
 let redoStack = [];
+let whoWon = ""
 let moveCount = 1;
 
 //bools
@@ -169,9 +170,12 @@ function gameWin(element, currentLocation) {
   pauseButton.disabled = true;
   if (element.firstElementChild.classList.contains("blue")) {
     document.getElementById("winner-text").textContent = "Green Won!";
+    whoWon = "green"
   } else {
     document.getElementById("winner-text").textContent = "Blue Won!";
+    whoWon = "blue"
   }
+  localStorage.setItem("whoWon", JSON.stringify(whoWon));
   element.innerHTML = "";
   element.innerHTML = gameOverCoin;
   winnerNotice.style.visibility = "visible";
@@ -194,17 +198,20 @@ function handlePlayerLossByTime(player) {
 
   if (player === "green") {
     document.getElementById("winner-text").textContent = "Time Over: Blue Won!";
+    whoWon = "blue"
   } else {
     document.getElementById("winner-text").textContent =
       "Time Over: Green Won!";
+      whoWon = "green"
   }
+  localStorage.setItem("whoWon", JSON.stringify(whoWon));
+
 
   winnerNotice.style.visibility = "visible";
   overallAudio.pause();
   gameOverAudio.play();
   saveGameStateHistoryToLocal();
 }
-
 function changePlayer() {
   if (currentPlayer === "green") {
     currentPlayer = "blue";
@@ -317,17 +324,17 @@ function replayGame() {
       ricochetRotation = gameState.rotation;
       currentPlayer = gameState.currentPlayer;
       remainingSeconds = gameState.remainingSeconds;
-      playerDisplay.innerText = `${currentPlayer}'s`;
+      playerDisplay.innerText = `${currentPlayer }'s`;
 
       updateBoard();
       new Promise((resolve, reject) => {
         setTimeout(() => {
           replayNextMove();
           resolve();
-        }, 2000);
+        }, 4000);
       }).then(() => {
         setTimeout(() => {
-          handleCannonShoot(currentPlayer === "green" ? "blue" : "green");
+          handleCannonShoot(currentPlayer );
         }, 100);
       });
       index++;
@@ -342,12 +349,14 @@ function replayGame() {
 }
 
 function showWinnerNotice(history) {
+  const winnerReplay = localStorage.getItem("whoWon")
   const lastMove = history[history.length - 1];
   const winningPlayer = lastMove.currentPlayer;
   winnerNotice.style.visibility = "visible";
-  document.getElementById("winner-text").textContent =
-    winningPlayer === "green" ? "Green Won!" : "Blue Won!";
+  document.getElementById("winner-text").textContent = winnerReplay;
+    // winningPlayer === "green" ? "Green Won!" : "Blue Won!";
 }
+
 
 function logMove(description) {
   const movesBoardChild = document.createElement("div");

@@ -23,11 +23,12 @@ let currentPlayer = "green";
 let ricochetRotation = {};
 let bulletDirection = "";
 let cannonCoords;
-let bulletSpeed = 100;
+let bulletSpeed = 300;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
 let redoStack = [];
+let whoWon = ""
 let moveCount = 1;
 
 //bools
@@ -153,6 +154,7 @@ function resetGame() {
     overallAudio.loop = true;
     overallAudio.volume = 0.4;
     localStorage.removeItem("gameStateHistory");
+    localStorage.removeItem("whoWon")
     gameStateHistory = [];
     moveCount = 1;
     gameHistoryBoard.innerHTML = "";
@@ -169,9 +171,12 @@ function gameWin(element, currentLocation) {
   pauseButton.disabled = true;
   if (element.firstElementChild.classList.contains("blue")) {
     document.getElementById("winner-text").textContent = "Green Won!";
+    whoWon = "green"
   } else {
     document.getElementById("winner-text").textContent = "Blue Won!";
+    whoWon = "blue"
   }
+  localStorage.setItem("whoWon", JSON.stringify(whoWon));
   element.innerHTML = "";
   element.innerHTML = gameOverCoin;
   winnerNotice.style.visibility = "visible";
@@ -194,10 +199,14 @@ function handlePlayerLossByTime(player) {
 
   if (player === "green") {
     document.getElementById("winner-text").textContent = "Time Over: Blue Won!";
+    whoWon = "blue"
   } else {
     document.getElementById("winner-text").textContent =
       "Time Over: Green Won!";
+      whoWon = "green"
   }
+  localStorage.setItem("whoWon", JSON.stringify(whoWon));
+
 
   winnerNotice.style.visibility = "visible";
   overallAudio.pause();
@@ -316,17 +325,17 @@ function replayGame() {
       ricochetRotation = gameState.rotation;
       currentPlayer = gameState.currentPlayer;
       remainingSeconds = gameState.remainingSeconds;
-      playerDisplay.innerText = `${currentPlayer}'s`;
+      playerDisplay.innerText = `${currentPlayer }'s`;
 
       updateBoard();
       new Promise((resolve, reject) => {
         setTimeout(() => {
           replayNextMove();
           resolve();
-        }, 2000);
+        }, 4000);
       }).then(() => {
         setTimeout(() => {
-          handleCannonShoot(currentPlayer === "green" ? "blue" : "green");
+          handleCannonShoot(currentPlayer );
         }, 100);
       });
       index++;
@@ -341,11 +350,12 @@ function replayGame() {
 }
 
 function showWinnerNotice(history) {
+  const winnerReplay = localStorage.getItem("whoWon")
   const lastMove = history[history.length - 1];
   const winningPlayer = lastMove.currentPlayer;
   winnerNotice.style.visibility = "visible";
-  document.getElementById("winner-text").textContent =
-    winningPlayer === "green" ? "Green Won!" : "Blue Won!";
+  document.getElementById("winner-text").textContent = winnerReplay;
+    // winningPlayer === "green" ? "Green Won!" : "Blue Won!";
 }
 
 function logMove(description) {
@@ -712,9 +722,30 @@ function shootBullet(row, column, bulletDirection) {
 
   moveBullet(location, row, column, bulletDirection);
 }
+
 function moveBullet(location, row, column, bulletDirection) {
+  // Clear previous animation classes
+  bulletDiv.classList = "bullet";
+
+  // Apply the appropriate animation class based on the bullet direction
+  switch (bulletDirection) {
+    case "right":
+      bulletDiv.classList.add("dirBulletRightAnime");
+      break;
+    case "left":
+      bulletDiv.classList.add("dirBulletLeftAnime");
+      break;
+    case "up":
+      bulletDiv.classList.add("dirBulletUpAnime");
+      break;
+    case "down":
+      bulletDiv.classList.add("dirBulletDownAnime");
+      break;
+    default:
+      break;
+  }
+
   setTimeout(() => {
-    // console.log(bulletDirection);
     let newRow = row;
     let newColumn = column;
     switch (bulletDirection) {
@@ -730,7 +761,6 @@ function moveBullet(location, row, column, bulletDirection) {
       case "down":
         newRow++;
         break;
-
       default:
         break;
     }
@@ -747,15 +777,11 @@ function moveBullet(location, row, column, bulletDirection) {
           location,
           currentPlayer
         );
-        // location.removeChild(bulletDiv);
-        // isBulletMoving = false;
-        // changePlayer();
         return;
       } else {
         newBox.appendChild(bulletDiv);
         location = newBox;
         isBulletMoving = true;
-        // console.log(bulletDirection);
         moveBullet(location, newRow, newColumn, bulletDirection);
       }
     } else {

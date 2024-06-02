@@ -2,31 +2,48 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ricochet Rumble</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 
-<body class = "rain-container">
+<body class="rain-container">
     <h1 id="title">Ricochet Rumble</h1>
     <h3>Please select your mode</h3>
     <div class="mode-container">
         <div class="modes" id="normal">
-            <h2>Normal </h2>
-            <img src="assets/Normal-Mode-home.png" alt="">
-            <button class="play" onclick = "window.location.href='normal-mode.html'">Play</button>
+            <img src="assets/Normal-Mode-home.png" alt="" />
+            <div class="inside">
+                <h2>Normal</h2>
+                <button class="play" onclick="window.location.href='normal-mode.html'">
+                    Play
+                </button>
+            </div>
+
         </div>
         <div class="modes" id="hacker">
-            <h2>Hacker </h2>
-            <img src="assets/Hacker-Mode-home.png" alt="">
-            <button class="play" onclick = "window.location.href='hacker-mode.html'" >Play</button>
+            <img src="assets/Hacker-Mode-home.png" alt="" />
+            <div class="inside">
+                <h2>Hacker</h2>
+                <button class="play" onclick="window.location.href='hacker-mode.html'">
+                    Play
+                </button>
+            </div>
         </div>
         <div class="modes" id="hacker++">
-            <h2>Hacker++ </h2>
-            <img src="assets/HackerPlusPlus-Mode-home.png" alt="">
-            <button class="play" onclick = "window.location.href='hackerplus.html'">Play</button>
-            <button id="btnForBot" onclick = "window.location.href='bot.html'" class="play">vs Bot</button>
+            <img src="assets/HackerPlusPlus-Mode-home.png" alt="" />
+            <div class="inside">
+                <h2>Hacker++</h2>
+                <div class="buttons"><button class="play" onclick="window.location.href='hackerplus.html'">
+                        Play
+                    </button>
+                    <button id="btnForBot" onclick="window.location.href='bot.html'" class="play">
+                        vs Bot
+                    </button>
+                </div>
+
+            </div>
         </div>
     </div>
     <footer>

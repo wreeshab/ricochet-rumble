@@ -19,9 +19,9 @@ body {
 
 .mode-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  width: 80%;
+  width: 100%;
   margin: 10px 0;
 }
 
@@ -37,33 +37,43 @@ h3 {
 
 h2 {
   font-size: 25px;
-  text-shadow: 0 0 20px #29a314;
+  /* text-shadow: 0 0 20px #29a314; */
+}
+.modes {
+  background-color: #151514;
+  margin: 20px;
+  width: 20%;
+  border: #29a314 2px solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 20px;
+  box-shadow: 0 0 20px #29a314;
+}
+.buttons{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
 }
 
-.modes {
-  width: 26%;
-  height: 500px;
+.inside {
+  border: #29a314 2px solid;
+  border-top: 0;
+  width: 100%;
+  height: 200px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 20px;
-  border: 3px #29a314 solid;
-  box-shadow: 0 0 20px #29a314;
-  min-width: 250px;
-  margin: 10px;
-  background-color: #151514;
+  border-radius: 0 0 20px 20px;
 }
-
-.modes:hover {
-  box-shadow: 0 0 20px #151514;
-  scale: 1.1;
-  transition: 0.5s;
-}
-
 img {
-  width: 90%;
+  width: 100%;
   margin: 30px 0;
+  border: #29a314 2px solid;
 }
 
 h3 {
@@ -79,6 +89,7 @@ button {
   border: 3px #151514 solid;
   box-shadow: 0 0 20px #29a314;
   margin: 10px;
+  scale: .7;
 }
 
 button:hover {
