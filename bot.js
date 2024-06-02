@@ -312,7 +312,7 @@ function replayGame() {
   let index = 0;
 
   function replayNextMove() {
-    if (index < history.length-1) {
+    if (index < history.length - 1) {
       const gameState = history[index];
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
@@ -365,127 +365,133 @@ function logMove(description) {
 }
 //here im assuming that the blue player is bot
 function botMove() {
-    if (gameOver || gamePaused || currentPlayer !== "blue") {
-      return;
-    }
-    const validMoves = getAllValidMovesForBot("blue");
-    if (validMoves.length === 0) {
-      handlePlayerLossByTime("blue");
-      return;
-    }
-    const randomIndex = Math.floor(Math.random() * validMoves.length);
-    const randomMove = validMoves[randomIndex];
-    executeBotMove(randomMove);
+  if (gameOver || gamePaused || currentPlayer !== "blue") {
+    return;
   }
-  
-  function getAllValidMovesForBot(player) {
-    const validMoves = [];
-    const parser = new DOMParser();
-  
-    for (let i = 0; i < width * width; i++) {
-      const piece = startPieces[i];
-      const row = Math.floor(i / width);
-      const column = i % width;
-  
-      // Parse the piece string into a DOM element
-      const doc = parser.parseFromString(piece, "text/html");
-      const pieceDOM = doc.querySelector("div");
-      // console.log(pieceDOM.parentNode);
-      if (pieceDOM && pieceDOM.getAttribute("class").includes(player)) {
-        const moves = getValidMovesForPieceForBot(row, column, pieceDOM);
-        validMoves.push(...moves);
-        // The below is for ricochets
-        if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
-          validMoves.push({ piece, row, column, type: "rotate" });
-        }
-      }
-    }
-    return validMoves;
+  const validMoves = getAllValidMovesForBot("blue");
+  if (validMoves.length === 0) {
+    handlePlayerLossByTime("blue");
+    return;
   }
-  
-  function getValidMovesForPieceForBot(row, column, piece) {
-    const moves = [];
-    const directions = [];
-  
-    if (piece.id === "topCannon" || piece.id === "bottomCanon") {
-      directions.push({ row: 0, column: -1 });
-      directions.push({ row: 0, column: 1 });
-    } else {
-      directions.push(
-        { row: -1, column: 0 }, // Up
-        { row: 1, column: 0 }, // Down
-        { row: 0, column: -1 }, // Left
-        { row: 0, column: 1 }, // Right
-        { row: -1, column: -1 }, // Up-Left
-        { row: -1, column: 1 }, // Up-Right
-        { row: 1, column: -1 }, // Down-Left
-        { row: 1, column: 1 } // Down-Right
-      );
-    }
-  
-    directions.forEach((direction) => {
-      const newRow = row + direction.row;
-      const newColumn = column + direction.column;
-  
-      // Check if the new position is valid
-      if (
-        isValidPosition(newRow, newColumn) &&
-        startPieces[newRow * width + newColumn] === ""
-      ) {
-        moves.push({
-          piece,
-          oldRow: row,
-          oldColumn: column,
-          row: newRow,
-          column: newColumn,
-          type: "move",
-        });
-      }
-    });
-    return moves;
-  }
-  function executeBotMove(move) {
-    console.log("move", move);
-    if (move.type === "move") {
-      movePiece(move.oldRow, move.oldColumn, move.row, move.column);
-    } else if (move.type === "rotate") {
-      rotatePieceForBot(move.row, move.column);
-    }
-    updateBoard();
-  }
-  function rotatePieceForBot(row, column) {
-    const pieceIndex = row * width + column;
-    const pieceHTML = startPieces[pieceIndex];
-  
-    // Parse the piece HTML into a DOM element
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(pieceHTML, "text/html");
+  const randomIndex = Math.floor(Math.random() * validMoves.length);
+  const randomMove = validMoves[randomIndex];
+  executeBotMove(randomMove);
+}
+
+function getAllValidMovesForBot(player) {
+  const validMoves = [];
+  const parser = new DOMParser();
+
+  for (let i = 0; i < width * width; i++) {
+    const piece = startPieces[i];
+    const row = Math.floor(i / width);
+    const column = i % width;
+
+    // Parse the piece string into a DOM element
+    const doc = parser.parseFromString(piece, "text/html");
     const pieceDOM = doc.querySelector("div");
-  
-    if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
-      const currentRotation = ricochetRotation[pieceIndex] || 0;
-      const newRotation = (currentRotation + 90) % 360;
-      ricochetRotation[pieceIndex] = newRotation;
-  
-      // Apply rotation to the actual DOM element in the game board
-      const actualPieceDOM = document.querySelector(`#${pieceDOM.id}`);
-      if (actualPieceDOM) {
-        actualPieceDOM.style.transform = `rotate(${newRotation}deg)`;
+    // console.log(pieceDOM.parentNode);
+    if (pieceDOM && pieceDOM.getAttribute("class").includes(player)) {
+      const moves = getValidMovesForPieceForBot(row, column, pieceDOM);
+      validMoves.push(...moves);
+      // The below is for ricochets
+      if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
+        validMoves.push({ piece, row, column, type: "rotate" });
       }
     }
-    handleCannonShoot(currentPlayer);
-    updateBoard();
-    changePlayer();
   }
-  
-  resetButton.addEventListener("click", resetGame);
-  pauseButton.addEventListener("click", pauseGame);
-  resumeButton.addEventListener("click", resumeGame);
-  playAgainBtn.addEventListener("click", playAgain);
-  undoButton.addEventListener("click", undoLastMove);
-  redoButton.addEventListener("click", redoLastMove);
-  replayButton.addEventListener("click", replayGame);
-  
+  return validMoves;
+}
+
+function getValidMovesForPieceForBot(row, column, piece) {
+  const moves = [];
+  const directions = [];
+
+  if (piece.id === "topCannon" || piece.id === "bottomCanon") {
+    directions.push({ row: 0, column: -1 });
+    directions.push({ row: 0, column: 1 });
+  } else {
+    directions.push(
+      { row: -1, column: 0 }, // Up
+      { row: 1, column: 0 }, // Down
+      { row: 0, column: -1 }, // Left
+      { row: 0, column: 1 }, // Right
+      { row: -1, column: -1 }, // Up-Left
+      { row: -1, column: 1 }, // Up-Right
+      { row: 1, column: -1 }, // Down-Left
+      { row: 1, column: 1 } // Down-Right
+    );
+  }
+
+  directions.forEach((direction) => {
+    const newRow = row + direction.row;
+    const newColumn = column + direction.column;
+
+    // Check if the new position is valid
+    if (
+      isValidPosition(newRow, newColumn) &&
+      startPieces[newRow * width + newColumn] === ""
+    ) {
+      moves.push({
+        piece,
+        oldRow: row,
+        oldColumn: column,
+        row: newRow,
+        column: newColumn,
+        type: "move",
+      });
+    }
+  });
+  return moves;
+}
+function executeBotMove(move) {
+  console.log("move", move);
+  if (move.type === "move") {
+    movePiece(move.oldRow, move.oldColumn, move.row, move.column);
+    if (move.piece.id === "ricochet" || move.piece.id === "semiRicochet") {
+      let temp = ricochetRotation[move.oldRow * width + move.oldColumn];
+      ricochetRotation[move.oldRow * width + move.oldColumn] =
+        ricochetRotation[move.row * width + move.column];
+      ricochetRotation[move.row * width + move.column] = temp;
+    }
+  } else if (move.type === "rotate") {
+    rotatePieceForBot(move.row, move.column);
+  }
+  updateBoard();
+}
+
+function rotatePieceForBot(row, column) {
+  const pieceIndex = row * width + column;
+  const pieceHTML = startPieces[pieceIndex];
+
+  // Parse the piece HTML into a DOM element
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(pieceHTML, "text/html");
+  const pieceDOM = doc.querySelector("div");
+
+  if (pieceDOM.id === "semiRicochet" || pieceDOM.id === "ricochet") {
+    const currentRotation = ricochetRotation[pieceIndex] || 0;
+    const newRotation = (currentRotation + 90) % 360;
+    ricochetRotation[pieceIndex] = newRotation;
+
+    // Apply rotation to the actual DOM element in the game board
+    const actualPieceDOM = document.querySelector(`#${pieceDOM.id}`);
+    if (actualPieceDOM) {
+      actualPieceDOM.style.transform = `rotate(${newRotation}deg)`;
+    }
+  }
+  handleCannonShoot(currentPlayer);
+  updateBoard();
+}
+
+resetButton.addEventListener("click", resetGame);
+pauseButton.addEventListener("click", pauseGame);
+resumeButton.addEventListener("click", resumeGame);
+playAgainBtn.addEventListener("click", playAgain);
+undoButton.addEventListener("click", undoLastMove);
+redoButton.addEventListener("click", redoLastMove);
+replayButton.addEventListener("click", replayGame);
+
 function createBoard() {
   startPieces.forEach((startPiece, i) => {
     const square = document.createElement("div");
@@ -1005,7 +1011,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
     return;
   } else {
     shootBullet(newRow, newColumn, bulletDirection);
-    rotateDirBullet(oldBulletDirection); 
+    rotateDirBullet(oldBulletDirection);
   }
 }
 function deleteSemiRicochet(element) {
@@ -1034,7 +1040,7 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   bulletDiv.classList = "bullet";
   const oldBulletDirection = bulletDirection;
-  
+
   if (
     element.style.transform === "rotate(0deg)" ||
     element.style.transform === "rotate(180deg)"
@@ -1077,59 +1083,57 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(bulletDirection);
 }
 function rotateDirBullet(oldBulletDirection) {
-  bulletDiv.classList = "bullet" //clear prev animaations
+  bulletDiv.classList = "bullet"; //clear prev animaations
   // console.log(bulletDiv.style.transform);
-  if(oldBulletDirection === "up"){
-    if(bulletDirection === "left"){
-    bulletDiv.classList.add("upLeftAnime")
-    }else if(bulletDirection === "right"){
-      bulletDiv.classList.add("upRightAnime")
+  if (oldBulletDirection === "up") {
+    if (bulletDirection === "left") {
+      bulletDiv.classList.add("upLeftAnime");
+    } else if (bulletDirection === "right") {
+      bulletDiv.classList.add("upRightAnime");
     }
-  }else if(oldBulletDirection === "down"){
-    if(bulletDirection === "right"){
-      bulletDiv.classList.add("downRightAnime")
-      }else if(bulletDirection === "left"){
-        bulletDiv.classList.add("downLeftAnime")
-      }
-  }else if(oldBulletDirection === "left"){
-    if(bulletDirection==="up"){
-      bulletDiv.classList.add("leftUpAnime")
-    }else if(bulletDirection === "down"){
-      bulletDiv.classList.add("leftDownAnime")
+  } else if (oldBulletDirection === "down") {
+    if (bulletDirection === "right") {
+      bulletDiv.classList.add("downRightAnime");
+    } else if (bulletDirection === "left") {
+      bulletDiv.classList.add("downLeftAnime");
     }
-  }else if(oldBulletDirection === "right"){
-    if(bulletDirection==="up"){
-      bulletDiv.classList.add("rightUpAnime")
-
-    }else if(bulletDirection === "down"){
-      bulletDiv.classList.add("rightDownAnime")
+  } else if (oldBulletDirection === "left") {
+    if (bulletDirection === "up") {
+      bulletDiv.classList.add("leftUpAnime");
+    } else if (bulletDirection === "down") {
+      bulletDiv.classList.add("leftDownAnime");
+    }
+  } else if (oldBulletDirection === "right") {
+    if (bulletDirection === "up") {
+      bulletDiv.classList.add("rightUpAnime");
+    } else if (bulletDirection === "down") {
+      bulletDiv.classList.add("rightDownAnime");
     }
   }
 
-
   switch (bulletDirection) {
     case "left":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(270deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(270deg)"
       break;
     case "right":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(90deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(90deg)"
       break;
     case "up":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(0deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(0deg)";
       break;
     case "down":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(180deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(180deg)";
       break;
   }
