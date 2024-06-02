@@ -50,7 +50,7 @@ Note: other pieces going to the old parent will have 90 deg rotation whichh is a
 <br>
 2) if a semiRico is broken it is not visually reflected immediately (its being updated in the next move only) though the master array is updated simulatneously.
 <br>
-3)<s> rico/semirico turning is not considered as a move => even after they rotate, one more move is getting executed => 2 bullets are being shot!!!!!</s> resolved 
+3)<s> rico/semirico turning is not considered as a move => even after they rotate, one more move is getting executed => 2 bullets are being shot!!!!!</s> resolved <br>
 4) lets say the bot moves the cannon, then bullet is originating from the cannon's old location and not the new location.
 
 
