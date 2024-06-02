@@ -330,11 +330,64 @@ button:disabled {
     width: 75px;
     height: 75px;
 }
-
 #directionalBullet {
     height: 45px;
     width: 45px;
+    position: relative;
 }
+
+.dirBulletUpAnime {
+    animation: directionUp .3s linear ;
+}
+
+@keyframes directionUp {
+    from {
+        top: 40px;
+    }
+    to {
+        top: -40px;
+    }
+}
+
+.dirBulletRightAnime {
+    animation: directionRight .3s linear;
+}
+
+@keyframes directionRight {
+    from {
+        left: -40px;
+    }
+    to {
+        left: 40px;
+    }
+}
+
+.dirBulletDownAnime {
+    animation: directionDown .3s linear;
+}
+
+@keyframes directionDown {
+    from {
+        top: -40px;
+    }
+    to {
+        top: 40px;
+    }
+}
+
+.dirBulletLeftAnime {
+    animation: directionLeft .3s linear;
+}
+
+@keyframes directionLeft {
+    from {
+        left: 40px;
+    }
+    to {
+        left: -40px;
+    }
+}
+
 
 #game-state-history {
     overflow-x: hidden;
