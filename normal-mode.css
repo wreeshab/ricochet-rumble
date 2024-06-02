@@ -387,4 +387,8 @@ button:disabled {
     #control-center {
         scale: .8;
     }
+    html{
+        overflow-x: scroll;
+        overflow-y: scroll;
+      }
 }

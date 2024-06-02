@@ -402,6 +402,12 @@ button:disabled {
 }
 
 @media screen and (max-width: 450px) {
+    html{
+        overflow-x: scroll;
+        overflow-y: scroll;
+      }
+    
+    
     body {
         display: flex;
         flex-direction: column;
