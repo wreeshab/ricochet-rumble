@@ -337,7 +337,7 @@ button:disabled {
 }
 
 .dirBulletUpAnime {
-    animation: directionUp .3s linear ;
+    animation: directionUp .15s linear ;
 }
 
 @keyframes directionUp {
@@ -350,7 +350,7 @@ button:disabled {
 }
 
 .dirBulletRightAnime {
-    animation: directionRight .3s linear;
+    animation: directionRight .15s linear;
 }
 
 @keyframes directionRight {
@@ -363,7 +363,7 @@ button:disabled {
 }
 
 .dirBulletDownAnime {
-    animation: directionDown .3s linear;
+    animation: directionDown .15s linear;
 }
 
 @keyframes directionDown {
@@ -376,7 +376,7 @@ button:disabled {
 }
 
 .dirBulletLeftAnime {
-    animation: directionLeft .3s linear;
+    animation: directionLeft .15s linear;
 }
 
 @keyframes directionLeft {

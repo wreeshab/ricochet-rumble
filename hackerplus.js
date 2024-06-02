@@ -23,7 +23,7 @@ let currentPlayer = "green";
 let ricochetRotation = {};
 let bulletDirection = "";
 let cannonCoords;
-let bulletSpeed = 300;
+let bulletSpeed = 150;
 let remainingSeconds = 21;
 let timerId = null;
 let gameStateHistory = [];
@@ -307,7 +307,7 @@ function replayGame() {
     alert("No game history found for replay.");
     return;
   }
-  
+
   let index = 0;
 
   function replayNextMove() {
@@ -323,7 +323,8 @@ function replayGame() {
       // Check if it's Green's turn to move a piece and shoot
       if (currentPlayer === "green") {
         movePieceAndShoot("green").then(replayNextMove);
-      } else { // Blue's turn
+      } else {
+        // Blue's turn
         movePieceAndShoot("blue").then(replayNextMove);
       }
     }
@@ -354,7 +355,6 @@ function movePlayerPiece(player) {
     }, 4000); // Adjust delay time as needed
   });
 }
-
 
 function logMove(description) {
   const movesBoardChild = document.createElement("div");
@@ -728,16 +728,20 @@ function moveBullet(location, row, column, bulletDirection) {
   // Apply the appropriate animation class based on the bullet direction
   switch (bulletDirection) {
     case "right":
-      bulletDiv.classList.add("dirBulletRightAnime");
+      if (bulletDiv.parentNode.childNodes.length == 1)
+        bulletDiv.classList.add("dirBulletRightAnime");
       break;
     case "left":
-      bulletDiv.classList.add("dirBulletLeftAnime");
+      if (bulletDiv.parentNode.childNodes.length == 1)
+        bulletDiv.classList.add("dirBulletLeftAnime");
       break;
     case "up":
-      bulletDiv.classList.add("dirBulletUpAnime");
+      if (bulletDiv.parentNode.childNodes.length == 1)
+        bulletDiv.classList.add("dirBulletUpAnime");
       break;
     case "down":
-      bulletDiv.classList.add("dirBulletDownAnime");
+      if (bulletDiv.parentNode.childNodes.length == 1)
+        bulletDiv.classList.add("dirBulletDownAnime");
       break;
     default:
       break;
@@ -812,9 +816,13 @@ function handleBulletCollision(
   } else if (element.children[0].id == "titan") {
     gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
+    bulletDiv.classList = "bullet";
+    console.log(bulletDiv.classList);
     handleSemiRicochetCollision(element, newRow, newColumn, currentLocation);
     ricochetAudio.play();
   } else if (element.children[0].id == "ricochet") {
+    bulletDiv.classList = "bullet";
+    console.log(bulletDiv.classList);
     handleRicochetCollision(element, newRow, newColumn, currentLocation);
     ricochetAudio.play();
   }
@@ -836,6 +844,7 @@ function handleTankCollision(element, newRow, newColumn, currentLocation) {
 }
 
 function handleSemiRicochetCollision(element, newRow, newColumn, location) {
+  bulletDiv.classList = "bullet";
   // console.log(element.style.transform);
   // console.log(bulletDirection);
 
@@ -908,6 +917,8 @@ function deleteSemiRicochet(element) {
 
 function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
+  bulletDiv.classList = "bullet";
+
   if (
     element.style.transform === "rotate(0deg)" ||
     element.style.transform === "rotate(180deg)"
