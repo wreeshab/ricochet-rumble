@@ -432,6 +432,7 @@ function getValidMovesForPieceForBot(row, column, piece) {
       isValidPosition(newRow, newColumn) &&
       startPieces[newRow * width + newColumn] === ""
     ) {
+      console.log(piece.id);
       moves.push({
         piece,
         oldRow: row,
@@ -439,6 +440,7 @@ function getValidMovesForPieceForBot(row, column, piece) {
         row: newRow,
         column: newColumn,
         type: "move",
+        coin: piece.id === "topCannon" ? "cannon" : "nothing",
       });
     }
   });
@@ -447,7 +449,13 @@ function getValidMovesForPieceForBot(row, column, piece) {
 function executeBotMove(move) {
   console.log("move", move);
   if (move.type === "move") {
-    movePiece(move.oldRow, move.oldColumn, move.row, move.column);
+    if(move.coin === "cannon"){
+      // handleCannonShoot("blue");
+      moveCannon(move.oldRow, move.oldColumn, move.row, move.column);
+    }else{
+      movePiece(move.oldRow, move.oldColumn, move.row, move.column);
+    }
+    
     if (move.piece.id === "ricochet" || move.piece.id === "semiRicochet") {
       let temp = ricochetRotation[move.oldRow * width + move.oldColumn];
       ricochetRotation[move.oldRow * width + move.oldColumn] =
@@ -459,6 +467,7 @@ function executeBotMove(move) {
   }
   updateBoard();
 }
+
 
 function rotatePieceForBot(row, column) {
   const pieceIndex = row * width + column;
@@ -1034,6 +1043,7 @@ function deleteSemiRicochet(element) {
   logMove(
     `${lostPiece.toUpperCase()} lost a semi-ricochet at (${row}, ${column})`
   );
+  updateBoard();
 }
 
 function handleRicochetCollision(element, newRow, newColumn, location) {
