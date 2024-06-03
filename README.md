@@ -37,7 +37,7 @@
 <br>
 2)<s>Randomized Playable starting position.</s>
 <br>
-3)Animate the game movements (For e.g., smoother bullets)
+3)<s>Animate the game movements (For e.g., smoother bullets)</s>
 <br>
 5)Add spells (For eg: spell which makes a piece passthrough for a move)
 <br>

@@ -291,6 +291,7 @@ undoButton.addEventListener("click", undoLastMove);
 redoButton.addEventListener("click", redoLastMove);
 swapButton.addEventListener("click", swapRicochet);
 swapButton.disabled = true;
+
 function swapRicochet() {
   ricoSwap = true;
   if (selectedPiece.pieceName === "Ricochet") {

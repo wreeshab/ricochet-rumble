@@ -236,8 +236,8 @@ function saveGameState() {
   if (redoStack.length > 0) {
     redoStack = []; // Clear the redo stack if a new move is made
   }
-  console.log("New move made: redoStack cleared");
-  console.log("Current gameStateHistory:", gameStateHistory);
+  // console.log("New move made: redoStack cleared");
+  // console.log("Current gameStateHistory:", gameStateHistory);
 }
 
 function undoLastMove() {
@@ -254,7 +254,7 @@ function undoLastMove() {
       currentPlayer: currentPlayer,
       remainingSeconds: remainingSeconds,
     });
-    console.log("Undo: Current state pushed to redoStack:", redoStack);
+    // console.log("Undo: Current state pushed to redoStack:", redoStack);
     startPieces = lastGameState.pieces;
     ricochetRotation = lastGameState.rotation;
     currentPlayer = lastGameState.currentPlayer;
@@ -274,14 +274,15 @@ function redoLastMove() {
       currentPlayer: currentPlayer,
       remainingSeconds: remainingSeconds,
     });
-    console.log(
-      "Redo: Current state pushed to gameStateHistory:",
-      gameStateHistory
-    );
+    // console.log(
+    //   "Redo: Current state pushed to gameStateHistory:",
+    //   gameStateHistory
+    // );
     startPieces = redoGameState.pieces;
     ricochetRotation = redoGameState.rotation;
     currentPlayer = redoGameState.currentPlayer;
     remainingSeconds = redoGameState.remainingSeconds;
+    
     logMove("Redo");
     playerDisplay.innerText = `${currentPlayer}'s`;
     updateBoard();
@@ -300,7 +301,6 @@ function loadGameStateHistoryFromLocal() {
     return [];
   }
 }
-
 function replayGame() {
   const history = loadGameStateHistoryFromLocal();
   winnerNotice.style.visibility = "hidden";
@@ -312,7 +312,7 @@ function replayGame() {
   let index = 0;
 
   function replayNextMove() {
-    if (index < history.length-1) {
+    if (index < history.length - 1) {
       const gameState = history[index];
       startPieces = gameState.pieces;
       ricochetRotation = gameState.rotation;
@@ -320,13 +320,12 @@ function replayGame() {
       document.getElementById("whose-turn").style.visibility = "hidden";
       updateBoard();
       index++;
+      console.log(currentPlayer);
 
-      // Check if it's Green's turn to move a piece and shoot
       if (currentPlayer === "green") {
-        movePieceAndShoot("green").then(replayNextMove);
+        movePieceAndShoot("green", replayNextMove);
       } else {
-        // Blue's turn
-        movePieceAndShoot("blue").then(replayNextMove);
+        movePieceAndShoot("blue", replayNextMove);
       }
     }
   }
@@ -334,29 +333,28 @@ function replayGame() {
   replayNextMove();
 }
 
-function movePieceAndShoot(player) {
-  return new Promise((resolve) => {
-    // Move the piece for the player
-    movePlayerPiece(player).then(() => {
-      // Handle cannon shoot for the player after moving the piece
-      handleCannonShoot(player);
-      resolve();
-    });
-  });
-}
+function movePieceAndShoot(player, callback) {
+  movePlayerPiece(player, function() {
+    // Update the board to reflect the new position of the cannon
+    updateBoard();
 
-function movePlayerPiece(player) {
-  return new Promise((resolve) => {
-    // Perform the piece movement logic here
-    // For demonstration purposes, let's assume the movement takes 2 seconds
     setTimeout(() => {
-      // Update the board after moving the piece
-      updateBoard();
-      resolve();
-    }, 4000); // Adjust delay time as needed
+      handleCannonShoot(player);
+      callback();
+    }, 5000); // Delay to ensure the piece movement is completed
   });
 }
 
+
+function movePlayerPiece(player, callback) {
+  // Perform the piece movement logic here
+  // For demonstration purposes, let's assume the movement takes 2 seconds
+  setTimeout(() => {
+    // Update the board after moving the piece
+    updateBoard();
+    callback();
+  }, 2000); // Adjust delay time as needed
+}
 function logMove(description) {
   const movesBoardChild = document.createElement("div");
   movesBoardChild.classList.add("moves-board-child");
@@ -816,12 +814,12 @@ function handleBulletCollision(
     gameWin(element, currentLocation);
   } else if (element.children[0].id == "semiRicochet") {
     bulletDiv.classList = "bullet";
-    console.log(bulletDiv.classList);
+    // console.log(bulletDiv.classList);
     handleSemiRicochetCollision(element, newRow, newColumn, currentLocation);
     ricochetAudio.play();
   } else if (element.children[0].id == "ricochet") {
     bulletDiv.classList = "bullet";
-    console.log(bulletDiv.classList);
+    // console.log(bulletDiv.classList);
     handleRicochetCollision(element, newRow, newColumn, currentLocation);
     ricochetAudio.play();
   }
@@ -890,7 +888,7 @@ function handleSemiRicochetCollision(element, newRow, newColumn, location) {
     return;
   } else {
     shootBullet(newRow, newColumn, bulletDirection);
-    rotateDirBullet(oldBulletDirection); 
+    rotateDirBullet(oldBulletDirection);
   }
 }
 function deleteSemiRicochet(element) {
@@ -919,7 +917,7 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(element.style.transform);
   bulletDiv.classList = "bullet";
   const oldBulletDirection = bulletDirection;
-  
+
   if (
     element.style.transform === "rotate(0deg)" ||
     element.style.transform === "rotate(180deg)"
@@ -962,59 +960,57 @@ function handleRicochetCollision(element, newRow, newColumn, location) {
   // console.log(bulletDirection);
 }
 function rotateDirBullet(oldBulletDirection) {
-  bulletDiv.classList = "bullet" //clear prev animaations
+  bulletDiv.classList = "bullet"; //clear prev animaations
   // console.log(bulletDiv.style.transform);
-  if(oldBulletDirection === "up"){
-    if(bulletDirection === "left"){
-    bulletDiv.classList.add("upLeftAnime")
-    }else if(bulletDirection === "right"){
-      bulletDiv.classList.add("upRightAnime")
+  if (oldBulletDirection === "up") {
+    if (bulletDirection === "left") {
+      bulletDiv.classList.add("upLeftAnime");
+    } else if (bulletDirection === "right") {
+      bulletDiv.classList.add("upRightAnime");
     }
-  }else if(oldBulletDirection === "down"){
-    if(bulletDirection === "right"){
-      bulletDiv.classList.add("downRightAnime")
-      }else if(bulletDirection === "left"){
-        bulletDiv.classList.add("downLeftAnime")
-      }
-  }else if(oldBulletDirection === "left"){
-    if(bulletDirection==="up"){
-      bulletDiv.classList.add("leftUpAnime")
-    }else if(bulletDirection === "down"){
-      bulletDiv.classList.add("leftDownAnime")
+  } else if (oldBulletDirection === "down") {
+    if (bulletDirection === "right") {
+      bulletDiv.classList.add("downRightAnime");
+    } else if (bulletDirection === "left") {
+      bulletDiv.classList.add("downLeftAnime");
     }
-  }else if(oldBulletDirection === "right"){
-    if(bulletDirection==="up"){
-      bulletDiv.classList.add("rightUpAnime")
-
-    }else if(bulletDirection === "down"){
-      bulletDiv.classList.add("rightDownAnime")
+  } else if (oldBulletDirection === "left") {
+    if (bulletDirection === "up") {
+      bulletDiv.classList.add("leftUpAnime");
+    } else if (bulletDirection === "down") {
+      bulletDiv.classList.add("leftDownAnime");
+    }
+  } else if (oldBulletDirection === "right") {
+    if (bulletDirection === "up") {
+      bulletDiv.classList.add("rightUpAnime");
+    } else if (bulletDirection === "down") {
+      bulletDiv.classList.add("rightDownAnime");
     }
   }
 
-
   switch (bulletDirection) {
     case "left":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(270deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(270deg)"
       break;
     case "right":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(90deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(90deg)"
       break;
     case "up":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(0deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(0deg)";
       break;
     case "down":
-      setTimeout(()=>{
+      setTimeout(() => {
         bulletDiv.style.transform = "rotate(180deg)";
-      },bulletSpeed)
+      }, bulletSpeed);
       // bulletDiv.style.transform = "rotate(180deg)";
       break;
   }
