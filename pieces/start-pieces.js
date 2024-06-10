@@ -6,7 +6,7 @@ let startPieces = ["", topCannon, "", "", "", "", topTitan, "",
   "", "", "", "", "", "", "", "",
   "", "", "", "", "", "", "", "",
   "", "", bottomSemiRicochet, "", bottomRicochet, "", "", bottomTank,
-  "", bottomTitan, "", "", "", "", bottomCannon, ""
+  "", bottomCannon , "", "", "", "", bottomTitan, ""
 ];
 
 
